@@ -2,6 +2,8 @@ package GUI;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
+
 import javax.swing.*;
 
 import Graph.*;
@@ -10,6 +12,7 @@ public class GUI extends JFrame {
     private JLabel labelIn = new JLabel("Input matrix:");
     private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 -3\n2 1 -4 3\n 2 5 3 0");
     private JButton OKButton = new JButton("OK");
+    private JButton randomButton = new JButton("Randomize");
     private JLabel labelOut = new JLabel("Output matrix:");
     private JTextArea textOut = new JTextArea();
 
@@ -17,6 +20,7 @@ public class GUI extends JFrame {
     private JMenu helpMenu = new JMenu("Help");
     private JMenuItem about = new JMenuItem("About");
     private JMenuItem info = new JMenuItem("Info");
+
 
     public GUI() {
         super("Program");
@@ -53,8 +57,9 @@ public class GUI extends JFrame {
         Container southContainer = new Container();
         southContainer.setLayout(new FlowLayout());
         OKButton.addActionListener(new OKButtonListener ());
+        randomButton.addActionListener(new randomListener ());
         southContainer.add(OKButton);
-
+        southContainer.add(randomButton);
 
         container.add(northContainer, BorderLayout.NORTH);
         container.add(westContainer, BorderLayout.WEST);
@@ -72,6 +77,14 @@ public class GUI extends JFrame {
                 graph.FloydWarshall();
                 textOut.setText(graph.print());
             }
+        }
+    }
+
+    class randomListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) { // код рандомизации графа
+            /* 
+            случайное число вершин + случайное значение в матрице
+            */
         }
     }
 
