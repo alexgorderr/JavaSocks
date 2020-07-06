@@ -8,7 +8,7 @@ import Graph.*;
 
 public class GUI extends JFrame {
     private JLabel labelIn = new JLabel("Input matrix:");
-    private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 -3\n2 1 -4 3\n 2 5 3 0");
+    private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 -3\n2 1 -4 3\n2 5 3 0");
     private JButton OKButton = new JButton("OK");
     private JLabel labelOut = new JLabel("Output matrix:");
     private JTextArea textOut = new JTextArea();
@@ -69,7 +69,7 @@ public class GUI extends JFrame {
                 JOptionPane.showMessageDialog(null, "Your matrix is empty", "Message", JOptionPane.PLAIN_MESSAGE);
             } else {
                 Graph graph = new Graph(textIn.getText());
-                graph.FloydWarshall();
+                //graph.FloydWarshall();
                 textOut.setText(graph.print());
             }
         }
