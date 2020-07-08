@@ -2,8 +2,12 @@ package GUI;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxEvent;
+
 import com.mxgraph.view.mxGraph;
+
 import com.mxgraph.view.mxEdgeStyle;
 //import com.mxgraph.view.mxStylesheet;
 
@@ -13,7 +17,10 @@ import com.mxgraph.util.mxConstants;
 
 
 import javax.swing.*;
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.*;
 
 
@@ -21,20 +28,18 @@ import java.util.*;
 public class Vizualizator extends JPanel{
     private static int n = 0;
     private static int curCount = 0;
-    private static int m = 0;
-    private int i = 0, j = 0, k = 0;//for step
-    int[][] matrix;
+    int[][] matrix;//заданная изначально матрица
+    int[][] resultMatrix;//матрица достижимости
     int[] vertName;
 
     private mxGraph graph;
     private mxGraphComponent graphComponent;
     private Object parent;
     private Object points[];
-    private HashMap <Object, HashMap<Object, Object>> edges;
+    //private HashMap <Object, HashMap<Object, Object>> edges;
+    private MouseAdapter mouseAdapter;
 
 
-    private PrintWriter cout;
-    //private Object mxGraphComponent;
 
     private void upDateVertCount(boolean flag){
         if(flag) {
@@ -42,11 +47,19 @@ public class Vizualizator extends JPanel{
             points = java.util.Arrays.copyOf(points, n);
             vertName = java.util.Arrays.copyOf(vertName, n);
             matrix = java.util.Arrays.copyOf(matrix, n);
-            for(int i = 0; i < n-1; i++)
+            resultMatrix = java.util.Arrays.copyOf(resultMatrix, n);
+
+            for(int i = 0; i < n-1; i++) {
                 matrix[i] = java.util.Arrays.copyOf(matrix[i], n);
+                resultMatrix[i] = java.util.Arrays.copyOf(resultMatrix[i], n);
+            }
             matrix[n-1] = new int[n];
+            resultMatrix[n-1] = new int[n];
+
             for(int i = 0; i < n; i++){
                 matrix[n-1][i] = 0;
+                //check rs matr
+                resultMatrix[n-1][i] = 99999999;
             }
         }
 
@@ -58,12 +71,15 @@ public class Vizualizator extends JPanel{
         curCount = n;
         vertName = new int[n];
         matrix = new int[n][n];
+        resultMatrix = new int[n][n];
         points = new Object[n];//объекты вершмн
-        edges = new HashMap <Object, HashMap<Object, Object>>();
+        //edges = new HashMap <Object, HashMap<Object, Object>>();
 
         matrix = java.util.Arrays.copyOf(adjMatrix, n);
+        resultMatrix = java.util.Arrays.copyOf(adjMatrix, n);
         for(int i = 0; i < n; i++){
             matrix[i] = java.util.Arrays.copyOf(adjMatrix[i], n);
+            resultMatrix[i] = java.util.Arrays.copyOf(adjMatrix[i], n);
             vertName[i] = 0;
         }
 
@@ -73,11 +89,24 @@ public class Vizualizator extends JPanel{
 
         graph = new mxGraph();
 
+       if(mouseAdapter == null)
+            mouseAdapter = new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent mouseEvent) {
+                    mxCell cell = null;
+                    if(graphComponent != null) {
+                        cell = (mxCell) graphComponent.getCellAt(mouseEvent.getX(), mouseEvent.getY());
+                    }
+                    if(cell != null)
+                        displayStepResult((int)cell.getValue());
+                    super.mousePressed(mouseEvent);
+                }
+            };
+
+
+
         parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
-
-        //new mxCircleLayout(graph).execute(graph.getDefaultParent());
-        //new mxParallelEdgeLayout(graph).execute(graph.getDefaultParent());
 
         double phi0 = 0;
         double phi = 2 * Math.PI / n;
@@ -96,19 +125,29 @@ public class Vizualizator extends JPanel{
             for(int i = 0; i < n; i++){
                 for(int j = 0; j < n; j++){
                     if(matrix[i][j] > 0) {
-                        HashMap<Object, Object> valH = new HashMap<Object, Object>();
-                        valH.put(points[j], graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]));
-                        edges.put(points[i], valH);
-                        m++;
+                        var style = graph.getStylesheet().getDefaultEdgeStyle();
+                       // Object standartColor = style.get("strokeColor");
+                       // style.put("strokeColor", "#000000");
+                        graph.getModel().setStyle(graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]), "edgeStyle=myEdgeStyle");
+                        //style.put("strokeColor", standartColor);
+                        //graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
                     }
                 }
             }
 
         graph.getModel().endUpdate();
 
-            graphComponent = new mxGraphComponent(graph);
-            this.add(graphComponent);
+        mxParallelEdgeLayout layout = new mxParallelEdgeLayout(graph);
+        layout.execute(graph.getDefaultParent());
 
+
+        graphComponent = new mxGraphComponent(graph);
+
+
+        graphComponent.getGraphControl().addMouseListener(mouseAdapter);
+
+
+        this.add(graphComponent);
         this.revalidate();
     }
 
@@ -118,12 +157,8 @@ public class Vizualizator extends JPanel{
         upDateVertCount(true);
 
         graph.getModel().beginUpdate();
-        System.out.println("EE");
         points[n-1] = graph.insertVertex(parent, null, n, 300, 300, 18, 18, "shape=ellipse");
-        System.out.println("FF");
         vertName[n - 1] = 1;
-        System.out.println("RR");
-
         graph.getModel().endUpdate();
 
 
@@ -134,7 +169,6 @@ public class Vizualizator extends JPanel{
         if(vertID > 0 && vertID < n + 1){
             curCount--;
             //upDateVertCount(false);
-            //пересчитать ребра
             graph.getModel().beginUpdate();
 
             Object pointsForRemove[] = new Object[1];
@@ -164,13 +198,13 @@ public class Vizualizator extends JPanel{
 
             graph.getModel().beginUpdate();
             matrix[v1-1][v2-1] = edge;
-            System.out.println(matrix[v1-1][v2-1]);
+
             graph.getModel().beginUpdate();
 
             this.remove(graphComponent);
 
             functionVisual();
-            m++;
+
 
             graph.getModel().endUpdate();
 
@@ -200,34 +234,35 @@ public class Vizualizator extends JPanel{
             graph.getModel().beginUpdate();
             this.remove(graphComponent);
             functionVisual();
-            m = 0;
+            //m = 0;
             graph.getModel().endUpdate();
 
         }
 
     }
 
-    public void displayStepResult(int[][] matr){//пошаговая визуализация по исходной матрице
+    private void displayStepResult(int vert){//матрица достижимсти на текущем шаге
 
-        if(k < n && j >= n)
-            j = 0;
-        if(j < n && i >= n)
-            i = 0;
+        if(vert <= 0){return;}//никакая вершина не выбрана, но можно нарисовать все ребра
 
+            graph.getModel().beginUpdate();
+            for(int i = 0; i < n; i++){
 
-        for (; k < n; k++) {
-            for (; j < n; j++) {
-                for (; i < n; i++) {
-                    if (matrix[i][k] + matrix[k][j] < matrix[i][j]) {
-                        matrix[i][j] = matrix[i][k] + matrix[k][j];
-                        changeEdge(i + 1, j + 1, matrix[i][j]);
-                        return;
-                        //нажать на кнопку след шаг
-                    }
+                int edge = resultMatrix[vert-1][i];
+
+                if(edge > 0) {
+                    var style = graph.getStylesheet().getDefaultEdgeStyle();
+                    style.put("strokeColor", "#000000");
+                    style.put("fontColor", "#000000");
+                    System.out.println(3333333);
+
+                    graph.getModel().setStyle(graph.insertEdge(parent, null, edge, points[vert-1], points[i]), "edgeStyle=myEdgeStyle");
+                    System.out.println(88888);
 
                 }
             }
-        }
+            graph.getModel().endUpdate();
+
     }
 
 
@@ -241,8 +276,6 @@ public class Vizualizator extends JPanel{
         double phi = 2 * Math.PI / n;
         int r = 250; // радиус окружности
 
-        //for(int i = 0; i < vertName.length; i++)
-        //    vertName[i] = 0;
 
         //отображаем все вершины
         for (int i = 0; i < points.length; i++) {
@@ -253,7 +286,7 @@ public class Vizualizator extends JPanel{
             phi0 += phi;
         }
 
-        edges.clear();
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (matrix[i][j] > 0) {
@@ -263,7 +296,7 @@ public class Vizualizator extends JPanel{
                    // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
 
                     valH.put(points[j], graph.insertEdge(parent, null, matr[i][j], points[i], points[j]));//, mxConstants.STYLE_EDGE));
-                    edges.put(points[i], valH);
+                    //edges.put(points[i], valH);
                 }
             }
         }
