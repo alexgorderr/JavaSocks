@@ -1,4 +1,4 @@
-package Vizualizator;
+package GUI;
 
 
 import com.mxgraph.swing.mxGraphComponent;
