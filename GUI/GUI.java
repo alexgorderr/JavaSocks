@@ -10,13 +10,12 @@ import Vizualizator.Vizualizator;
 public class GUI {
     private JLabel labelIn = new JLabel("Input matrix:");
     private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 -3\n2 1 -4 3\n2 5 3 0");
+
     private JLabel labelOut = new JLabel("Output matrix:");
     private JTextArea textOut = new JTextArea();
 
-    private JLabel addLabel = new JLabel("Add");
     private JTextField addText = new JTextField("", 10);
     private JButton addButton = new JButton("Add");
-    private JLabel delLabel = new JLabel("Delete");
     private JTextField delText = new JTextField("", 10);
     private JButton delButton = new JButton("Delete");
 
