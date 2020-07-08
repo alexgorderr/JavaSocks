@@ -5,7 +5,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import Graph.*;
-import Vizualizator.Vizualizator;
 
 public class GUI {
     private JLabel labelIn = new JLabel("Input matrix:");
@@ -18,8 +17,6 @@ public class GUI {
     private JButton addButton = new JButton("Add");
     private JTextField delText = new JTextField("", 10);
     private JButton delButton = new JButton("Delete");
-
-//    private Vizualizator visual = new Vizualizator();
 
     private JButton OKButton = new JButton("OK");
     private JButton RandomButton = new JButton("Random");
@@ -54,13 +51,7 @@ public class GUI {
 
         Container centerContainer = new Container(); // контейнер под размещение в нем графа
 
-        JPanel center = new JPanel();
-        Vizualizator visual = new Vizualizator();
-        center.add(visual);
-        centerContainer.add(center);
-        /*
-        здесь должна быть реализация окна графа
-        */
+
 
         Container eastContainer = new Container();
         eastContainer.setLayout(new GridLayout(2, 2));
@@ -97,13 +88,15 @@ public class GUI {
 
                 Graph graph = new Graph(textIn.getText());
                 int[][] matr = graph.getMatrix();
-                JPanel newPanel = new JPanel();
 
                 Vizualizator visual = new Vizualizator();
-                visual.initMatrix(matr);
+                visual.initMatrix(matr, matr[0].length);
                 visual.functionVisual();
+                container.add(visual);
+                container.setVisible(true);
 
                 graph.FloydWarshall();
+                //показать результат работы алгоритма
                 textOut.setText(graph.print());
             }
         }
@@ -132,3 +125,4 @@ public class GUI {
     //
 
 }
+

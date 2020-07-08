@@ -1,8 +1,16 @@
 package GUI;
 
-
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxEdgeStyle;
+//import com.mxgraph.view.mxStylesheet;
+
+
+import com.mxgraph.util.mxConstants;
+
+
 
 import javax.swing.*;
 import java.io.PrintWriter;
@@ -26,7 +34,7 @@ public class Vizualizator extends JPanel{
 
 
     private PrintWriter cout;
-    private Object mxGraphComponent;
+    //private Object mxGraphComponent;
 
     private void upDateVertCount(boolean flag){
         if(flag) {
@@ -63,10 +71,14 @@ public class Vizualizator extends JPanel{
 
     public void functionVisual() {
 
-            graph = new mxGraph();
+        graph = new mxGraph();
 
         parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
+
+        //new mxCircleLayout(graph).execute(graph.getDefaultParent());
+        //new mxParallelEdgeLayout(graph).execute(graph.getDefaultParent());
+
         double phi0 = 0;
         double phi = 2 * Math.PI / n;
         int r = 250; // радиус окружности
@@ -106,8 +118,11 @@ public class Vizualizator extends JPanel{
         upDateVertCount(true);
 
         graph.getModel().beginUpdate();
+        System.out.println("EE");
         points[n-1] = graph.insertVertex(parent, null, n, 300, 300, 18, 18, "shape=ellipse");
+        System.out.println("FF");
         vertName[n - 1] = 1;
+        System.out.println("RR");
 
         graph.getModel().endUpdate();
 
@@ -118,6 +133,8 @@ public class Vizualizator extends JPanel{
 
         if(vertID > 0 && vertID < n + 1){
             curCount--;
+            //upDateVertCount(false);
+            //пересчитать ребра
             graph.getModel().beginUpdate();
 
             Object pointsForRemove[] = new Object[1];
@@ -143,7 +160,7 @@ public class Vizualizator extends JPanel{
     public void addEdge(int v1, int v2, int edge){
 
 
-        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин на экране
+        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
 
             graph.getModel().beginUpdate();
             matrix[v1-1][v2-1] = edge;
@@ -164,7 +181,7 @@ public class Vizualizator extends JPanel{
 
     public void changeEdge(int v1, int v2, int newEdge){
 
-        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин на экране
+        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
             graph.getModel().beginUpdate();
             removeEdge(v1, v2);
             addEdge(v1, v2, newEdge);
@@ -176,7 +193,7 @@ public class Vizualizator extends JPanel{
 
     public void removeEdge(int v1, int v2){
 
-        if(v1 > 0 && v2 > 0 && v1 < n && v2 < n && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин на экране
+        if(v1 > 0 && v2 > 0 && v1 < n && v2 < n && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
 
             matrix[v1-1][v2-1] = 0;
 
@@ -191,29 +208,29 @@ public class Vizualizator extends JPanel{
     }
 
     public void displayStepResult(int[][] matr){//пошаговая визуализация по исходной матрице
-       
+
         if(k < n && j >= n)
             j = 0;
         if(j < n && i >= n)
-            i = 0;       
-        
-        
+            i = 0;
+
+
         for (; k < n; k++) {
             for (; j < n; j++) {
                 for (; i < n; i++) {
                     if (matrix[i][k] + matrix[k][j] < matrix[i][j]) {
                         matrix[i][j] = matrix[i][k] + matrix[k][j];
-                        changeEdge(i + 1, j + 1, matrix[i][j]);  
+                        changeEdge(i + 1, j + 1, matrix[i][j]);
                         return;
-                        //нажать на кнопку след шаг, тогда снова будет вызов
+                        //нажать на кнопку след шаг
                     }
 
                 }
             }
         }
     }
-    
-    
+
+
     public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
 
         this.remove(graphComponent);
@@ -223,6 +240,9 @@ public class Vizualizator extends JPanel{
         double phi0 = 0;
         double phi = 2 * Math.PI / n;
         int r = 250; // радиус окружности
+
+        //for(int i = 0; i < vertName.length; i++)
+        //    vertName[i] = 0;
 
         //отображаем все вершины
         for (int i = 0; i < points.length; i++) {
@@ -239,7 +259,10 @@ public class Vizualizator extends JPanel{
                 if (matrix[i][j] > 0) {
                     HashMap<Object, Object> valH = new HashMap<Object, Object>();
                     //вес ребра между вершинами - длина кратчайшего пути между ними
-                    valH.put(points[j], graph.insertEdge(parent, null, matr[i][j], points[i], points[j]));
+                    //var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
+                   // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
+
+                    valH.put(points[j], graph.insertEdge(parent, null, matr[i][j], points[i], points[j]));//, mxConstants.STYLE_EDGE));
                     edges.put(points[i], valH);
                 }
             }
@@ -254,11 +277,4 @@ public class Vizualizator extends JPanel{
     }
 
 }
-
-
-
-
-
-
-
 

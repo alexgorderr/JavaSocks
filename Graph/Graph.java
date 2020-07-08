@@ -1,5 +1,6 @@
 package Graph;
 
+import java.util.*;
 import java.util.Scanner;
 
 public class Graph {
@@ -57,7 +58,7 @@ public class Graph {
             }
         }
     }
-    
+
     public String print(){
         String var1 = "";
         for ( int i = 0; i < n; ++i) {
