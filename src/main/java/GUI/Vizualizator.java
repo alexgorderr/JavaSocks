@@ -9,7 +9,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 
 import com.mxgraph.view.mxEdgeStyle;
-import com.mxgraph.view.mxStylesheet;
+//import com.mxgraph.view.mxStylesheet;
 
 
 import com.mxgraph.util.mxConstants;
@@ -33,13 +33,18 @@ public class Vizualizator extends JPanel{
     int[] vertName;
 
     private mxGraph graph;
-    private mxGraphComponent graphComponent;
+    private mxGraph stepGraph;
+    private mxGraphComponent graphComponent;//модель графа
+    private mxGraphComponent stepGraphComponent;//модель графа достижимости на текущем шаге
     private Object parent;
     private Object points[];
     //private HashMap <Object, HashMap<Object, Object>> edges;
     private MouseAdapter mouseAdapter;
 
 
+    public void updateResultMatrix(){
+
+    }
 
     private void upDateVertCount(boolean flag){
         if(flag) {
@@ -85,21 +90,35 @@ public class Vizualizator extends JPanel{
 
     }
 
+    private void returnGraphModel(){
+        System.out.println("%%%%%%");
+        this.remove(this.getComponents()[0]);
+        this.setVisible(false);
+        this.add(graphComponent);
+        this.setVisible(true);
+        this.revalidate();
+    }
     public void functionVisual() {
 
         graph = new mxGraph();
+       // stepGraph = new mxGraph();
 
-        if(mouseAdapter == null)
+       if(mouseAdapter == null)
             mouseAdapter = new MouseAdapter() {
                 @Override
-                public void mousePressed(MouseEvent mouseEvent) {
+                public void mouseClicked(MouseEvent mouseEvent) {
                     mxCell cell = null;
                     if(graphComponent != null) {
                         cell = (mxCell) graphComponent.getCellAt(mouseEvent.getX(), mouseEvent.getY());
                     }
                     if(cell != null)
                         displayStepResult((int)cell.getValue());
-                    super.mousePressed(mouseEvent);
+                    else{
+                        if(stepGraphComponent != null){
+                            returnGraphModel();
+                        }
+                    }
+                    super.mouseClicked(mouseEvent);
                 }
             };
 
@@ -114,26 +133,27 @@ public class Vizualizator extends JPanel{
 
         for (int i = 0; i < points.length; i++) {
             //points[i] - вершина
-            if(vertName[i] == -1)//вершина удалена
-                continue;
-            points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18, "shape=ellipse");
-            phi0 += phi;
-            vertName[i] = 1;
+                if(vertName[i] == -1)//вершина удалена
+                    continue;
+                points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18, "shape=ellipse");
+                //stepGraph.insertVertex()
+                phi0 += phi;
+                vertName[i] = 1;
 
         }
 
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < n; j++){
-                if(matrix[i][j] > 0) {
-                    var style = graph.getStylesheet().getDefaultEdgeStyle();
-                    // Object standartColor = style.get("strokeColor");
-                    // style.put("strokeColor", "#000000");
-                    graph.getModel().setStyle(graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]), "edgeStyle=myEdgeStyle");
-                    //style.put("strokeColor", standartColor);
-                    //graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
+            for(int i = 0; i < n; i++){
+                for(int j = 0; j < n; j++){
+                    if(matrix[i][j] > 0) {
+                        var style = graph.getStylesheet().getDefaultEdgeStyle();
+                       // Object standartColor = style.get("strokeColor");
+                       // style.put("strokeColor", "#000000");
+                        graph.getModel().setStyle(graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]), "edgeStyle=myEdgeStyle");
+                        //style.put("strokeColor", standartColor);
+                        //graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
+                    }
                 }
             }
-        }
 
         graph.getModel().endUpdate();
 
@@ -145,6 +165,7 @@ public class Vizualizator extends JPanel{
 
 
         graphComponent.getGraphControl().addMouseListener(mouseAdapter);
+
 
 
         this.add(graphComponent);
@@ -245,30 +266,64 @@ public class Vizualizator extends JPanel{
 
         if(vert <= 0){return;}//никакая вершина не выбрана, но можно нарисовать все ребра
 
-        graph.getModel().beginUpdate();
-        for(int i = 0; i < n; i++){
+        this.remove(this.getComponents()[0]);
+        this.setVisible(false);
+        this.setVisible(true);
 
-            int edge = resultMatrix[vert-1][i];
 
-            if(edge > 0) {
-                var style = graph.getStylesheet().getDefaultEdgeStyle();
-                style.put("strokeColor", "#000000");
-                style.put("fontColor", "#000000");
-                System.out.println(3333333);
+        stepGraph = new mxGraph();
+        stepGraph.getModel().beginUpdate();
+        Object[] stepPoints = new Object[n];
 
-                graph.getModel().setStyle(graph.insertEdge(parent, null, edge, points[vert-1], points[i]), "edgeStyle=myEdgeStyle");
-                System.out.println(88888);
 
+        double phi0 = 0;
+        double phi = 2 * Math.PI / n;
+        int r = 250; // радиус окружности
+
+        for (int i = 0; i < points.length; i++) {
+
+            if(vertName[i] > 0){
+                stepPoints[i] = stepGraph.insertVertex(stepGraph.getDefaultParent(), null, i+1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18,"shape=ellipse" );
+                phi0 += phi;
             }
+
         }
-        graph.getModel().endUpdate();
+        stepGraph.getModel().endUpdate();
+
+
+           stepGraph.getModel().beginUpdate();
+            for(int i = 0; i < n; i++){
+
+                int edge = resultMatrix[vert-1][i];
+
+                if(edge > 0) {
+
+                    var style = stepGraph.getStylesheet().getDefaultEdgeStyle();
+                    style.put("strokeColor", "#000000");
+                    style.put("fontColor", "#000000");
+
+                    stepGraph.getModel().setStyle(stepGraph.insertEdge(stepGraph.getDefaultParent(), null, edge, stepPoints[vert-1], stepPoints[i]), "edgeStyle=myEdgeStyle");
+
+                }
+            }
+
+        stepGraph.getModel().endUpdate();
+        stepGraphComponent = new mxGraphComponent(stepGraph);
+
+        stepGraphComponent.getGraphControl().addMouseListener(mouseAdapter);
+
+
+        this.add(stepGraphComponent);
+        this.revalidate();
 
     }
 
 
     public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
 
-        this.remove(graphComponent);
+        //this.remove(graphComponent);
+
+
         graph = new mxGraph();
         parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
@@ -293,7 +348,7 @@ public class Vizualizator extends JPanel{
                     HashMap<Object, Object> valH = new HashMap<Object, Object>();
                     //вес ребра между вершинами - длина кратчайшего пути между ними
                     //var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
-                    // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
+                   // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
 
                     valH.put(points[j], graph.insertEdge(parent, null, matr[i][j], points[i], points[j]));//, mxConstants.STYLE_EDGE));
                     //edges.put(points[i], valH);
@@ -303,10 +358,22 @@ public class Vizualizator extends JPanel{
 
         graph.getModel().endUpdate();
 
-        graphComponent = new mxGraphComponent(graph);
-        this.add(graphComponent);
+       // mxParallelEdgeLayout layoutParallel = new mxParallelEdgeLayout(graph);
+       // mxCircleLayout layoutCircle = new mxCircleLayout(graph);
+        //layoutParallel.execute(graph.getDefaultParent());
+      //  layoutCircle.execute(graph.getDefaultParent());
+
+        //graphComponent - наша текущая модель
+        this.remove(graphComponent);
+
+        stepGraphComponent = new mxGraphComponent(graph);
+        this.add(stepGraphComponent);
+
+        //graphComponent = new mxGraphComponent(graph);
+        //this.add(graphComponent);
 
         this.revalidate();
     }
 
 }
+
