@@ -42,8 +42,14 @@ public class Vizualizator extends JPanel{
     private MouseAdapter mouseAdapter;
 
 
-    public void updateResultMatrix(){
+    public void updateResultMatrix(int[][] matrix, int curN){
+        if(curN != n)
+            return;
+        resultMatrix = java.util.Arrays.copyOf(resultMatrix, n);
 
+        for(int i = 0; i < n; i++) {
+            resultMatrix[i] = java.util.Arrays.copyOf(matrix[i], n);
+        }
     }
 
     private void upDateVertCount(boolean flag){
