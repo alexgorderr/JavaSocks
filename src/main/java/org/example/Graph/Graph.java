@@ -1,4 +1,4 @@
-package Graph;
+package org.example.Graph;
 
 import java.util.*;
 import java.util.Scanner;

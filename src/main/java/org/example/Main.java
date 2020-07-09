@@ -1,6 +1,8 @@
-import GUI.*;
+package org.example;
 
-public class MainClass {
+import org.example.GUI.GUI;
+
+public class Main {
     public static void main(String[] args) {
         GUI gui = new GUI();
     }

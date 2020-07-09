@@ -1,4 +1,5 @@
-package GUI;
+package org.example.GUI;
+
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxParallelEdgeLayout;
@@ -9,7 +10,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.view.mxGraph;
 
 import com.mxgraph.view.mxEdgeStyle;
-//import com.mxgraph.view.mxStylesheet;
+import com.mxgraph.view.mxStylesheet;
 
 
 import com.mxgraph.util.mxConstants;
@@ -89,7 +90,7 @@ public class Vizualizator extends JPanel{
 
         graph = new mxGraph();
 
-       if(mouseAdapter == null)
+        if(mouseAdapter == null)
             mouseAdapter = new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent mouseEvent) {
@@ -114,26 +115,26 @@ public class Vizualizator extends JPanel{
 
         for (int i = 0; i < points.length; i++) {
             //points[i] - вершина
-                if(vertName[i] == -1)//вершина удалена
-                    continue;
-                points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18, "shape=ellipse");
-                phi0 += phi;
-                vertName[i] = 1;
+            if(vertName[i] == -1)//вершина удалена
+                continue;
+            points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18, "shape=ellipse");
+            phi0 += phi;
+            vertName[i] = 1;
 
         }
 
-            for(int i = 0; i < n; i++){
-                for(int j = 0; j < n; j++){
-                    if(matrix[i][j] > 0) {
-                        var style = graph.getStylesheet().getDefaultEdgeStyle();
-                       // Object standartColor = style.get("strokeColor");
-                       // style.put("strokeColor", "#000000");
-                        graph.getModel().setStyle(graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]), "edgeStyle=myEdgeStyle");
-                        //style.put("strokeColor", standartColor);
-                        //graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
-                    }
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                if(matrix[i][j] > 0) {
+                    var style = graph.getStylesheet().getDefaultEdgeStyle();
+                    // Object standartColor = style.get("strokeColor");
+                    // style.put("strokeColor", "#000000");
+                    graph.getModel().setStyle(graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]), "edgeStyle=myEdgeStyle");
+                    //style.put("strokeColor", standartColor);
+                    //graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
                 }
             }
+        }
 
         graph.getModel().endUpdate();
 
@@ -245,23 +246,23 @@ public class Vizualizator extends JPanel{
 
         if(vert <= 0){return;}//никакая вершина не выбрана, но можно нарисовать все ребра
 
-            graph.getModel().beginUpdate();
-            for(int i = 0; i < n; i++){
+        graph.getModel().beginUpdate();
+        for(int i = 0; i < n; i++){
 
-                int edge = resultMatrix[vert-1][i];
+            int edge = resultMatrix[vert-1][i];
 
-                if(edge > 0) {
-                    var style = graph.getStylesheet().getDefaultEdgeStyle();
-                    style.put("strokeColor", "#000000");
-                    style.put("fontColor", "#000000");
-                    System.out.println(3333333);
+            if(edge > 0) {
+                var style = graph.getStylesheet().getDefaultEdgeStyle();
+                style.put("strokeColor", "#000000");
+                style.put("fontColor", "#000000");
+                System.out.println(3333333);
 
-                    graph.getModel().setStyle(graph.insertEdge(parent, null, edge, points[vert-1], points[i]), "edgeStyle=myEdgeStyle");
-                    System.out.println(88888);
+                graph.getModel().setStyle(graph.insertEdge(parent, null, edge, points[vert-1], points[i]), "edgeStyle=myEdgeStyle");
+                System.out.println(88888);
 
-                }
             }
-            graph.getModel().endUpdate();
+        }
+        graph.getModel().endUpdate();
 
     }
 
@@ -293,7 +294,7 @@ public class Vizualizator extends JPanel{
                     HashMap<Object, Object> valH = new HashMap<Object, Object>();
                     //вес ребра между вершинами - длина кратчайшего пути между ними
                     //var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
-                   // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
+                    // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
 
                     valH.put(points[j], graph.insertEdge(parent, null, matr[i][j], points[i], points[j]));//, mxConstants.STYLE_EDGE));
                     //edges.put(points[i], valH);
@@ -310,4 +311,3 @@ public class Vizualizator extends JPanel{
     }
 
 }
-

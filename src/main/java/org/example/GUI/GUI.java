@@ -1,10 +1,11 @@
-package GUI;
+package org.example.GUI;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import Graph.*;
+import org.example.Graph.*;
+import org.example.GUI.Vizualizator.*;
 
 public class GUI {
     private JLabel labelIn = new JLabel("Input matrix:");
