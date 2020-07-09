@@ -8,18 +8,6 @@ public class Graph {
     private int[][] matrix;
     static int I = 99999999; // Integer.MAX_VALUE
 
-    public int[][] getMatrix() {
-        return matrix;
-    }
-
-    public void changeMatrix(int value) {
-        matrix[curI][curJ] = value;
-    }
-    public int getN() { return n;}
-    public int getJ() { return curJ;}
-    public int getI() { return curI;}
-    public int getK() { return curK;}
-
 
     public Graph(String var1) {
         Scanner var2 = new Scanner(var1);
@@ -115,5 +103,22 @@ public class Graph {
         }
         System.out.println(var1);
         return var1;
+    }
+
+
+    public int[][] getMatrix() {
+        return matrix;
+    }
+
+    public void changeMatrix(int value) {
+        matrix[curI][curJ] = value;
+    }
+    public int getN() { return n;}
+    public int getJ() { return curJ;}
+    public int getI() { return curI;}
+    public int getK() { return curK;}
+
+    public void setMatrix(int[][] newMatrix) {
+
     }
 }
