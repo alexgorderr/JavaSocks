@@ -9,7 +9,7 @@ public class Graph {
     static int I = 99999999; // Integer.MAX_VALUE
 
 
-    public Graph(String var1) {
+    public Graph(String var1) throws Exception {
         curK = 0;
         curI = 0;
         curJ = 0;
@@ -21,7 +21,12 @@ public class Graph {
         n = arr.length;
         matrix = new int[n][n];
         for (String it : arr) {
-            matrix[i][j] = Integer.parseInt(it);
+            try{
+                matrix[i][j] = Integer.parseInt(it);}
+            catch(Exception e){
+                System.err.println("You entered the wrong data type:use the int type.");}
+            if(matrix[i][j]<0)
+                throw new Exception("The matrix cannot negative numbers!");
             j++;
         }
         i++;
@@ -138,12 +143,19 @@ public class Graph {
         String var1 = "";
         for ( int i = 0; i < n; ++i) {
             for ( int j = 0; j < n; ++j) {
-                if(matrix[i][j]==I)
-                    var1 += " " + "I";
-                else
-                    var1 += " " + matrix[i][j];
+                if(j==0){
+                    if(matrix[i][j]==I)
+                        var1 += "I";
+                    else
+                        var1 +=matrix[i][j];}
+                else{
+                    if(matrix[i][j]==I)
+                        var1 += " " + "I";
+                    else
+                        var1 += " " + matrix[i][j];}
             }
-            var1+="\n";
+            if(i!=n-1)
+                var1+="\n";
         }
         System.out.println(var1);
         return var1;

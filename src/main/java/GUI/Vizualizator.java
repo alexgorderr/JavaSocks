@@ -20,6 +20,7 @@ import com.mxgraph.util.mxConstants;
 import javax.swing.*;
 //import java.io.PrintWriter;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -266,7 +267,7 @@ public class Vizualizator extends JPanel{
 
     }
 
-    public void removeVert(int vertID){//название вершины (от 1 и ...)
+    public void removeVert(int vertID) throws IOException {//название вершины (от 1 и ...)
 
         if(vertID > 0 && vertID < n + 1){
             curCount--;
@@ -290,10 +291,12 @@ public class Vizualizator extends JPanel{
             vertName[vertID-1] = -1;
 
         }
+        else{
+            throw new IOException("This vertex does not exist");        }
 
     }
 
-    public void addEdge(int v1, int v2, int edge){
+    public void addEdge(int v1, int v2, int edge) throws IOException {
 
 
         if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
@@ -311,23 +314,29 @@ public class Vizualizator extends JPanel{
             graph.getModel().endUpdate();
 
         }
-
-
-    }
-
-    public void changeEdge(int v1, int v2, int newEdge){
-
-        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
-            graph.getModel().beginUpdate();
-            removeEdge(v1, v2);
-            addEdge(v1, v2, newEdge);
-            graph.getModel().endUpdate();
+        else{
+            throw new IOException("This edge does not exist");
         }
 
 
     }
 
-    public void removeEdge(int v1, int v2){
+    public void changeEdge(int v1, int v2, int newEdge){
+        try{
+        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
+            graph.getModel().beginUpdate();
+            removeEdge(v1, v2);
+            addEdge(v1, v2, newEdge);
+            graph.getModel().endUpdate();
+        }}
+        catch(IOException e){
+            System.err.println("This edge can't be change");
+        }
+
+
+    }
+
+    public void removeEdge(int v1, int v2) throws IOException {
 
         if(v1 > 0 && v2 > 0 && v1 <= n && v2 <= n && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
 
@@ -340,6 +349,9 @@ public class Vizualizator extends JPanel{
             //m = 0;
             graph.getModel().endUpdate();
 
+        }
+        else{
+            throw new IOException("This edge does not exist");
         }
 
     }

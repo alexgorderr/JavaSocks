@@ -3,6 +3,7 @@ package GUI;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Random.*;
 import java.util.Scanner;
@@ -129,7 +130,11 @@ public class GUI {
                 JOptionPane.showMessageDialog(null, "Your matrix is empty", "Message", JOptionPane.PLAIN_MESSAGE);
             } else {
 
-                graph = new Graph(textIn.getText());
+                try {
+                    graph = new Graph(textIn.getText());
+                } catch (Exception exception) {
+                    System.err.println("Failed to create a graph");
+                }
                 int[][] matr = graph.getMatrix();
 
                 System.out.println(container.getSize().height);
@@ -228,7 +233,11 @@ public class GUI {
                         str+= "\n";
                     }*/
                     textIn.setText(str);
-                    graph = new Graph(str);
+                    try {
+                        graph = new Graph(str);
+                    } catch (Exception exception) {
+                        System.err.println("Failed to create a graph");
+                    }
 
                     visual = new Vizualizator();
                     visual.initMatrix(matr, matr[0].length);
@@ -312,7 +321,11 @@ public class GUI {
                 delEdgeText.setText("");
 
                 graph.addEdge(v1, v2, edge);
-                visual.addEdge(v1, v2, edge);
+                try {
+                    visual.addEdge(v1, v2, edge);
+                } catch (IOException ioException) {
+                    System.err.println("Failed to add an edge");
+                }
             }
 
 
@@ -356,7 +369,11 @@ public class GUI {
                 Scanner in = new Scanner(delVertexText.getText());
                 int v = in.nextInt();
                 graph.deleteVert(v);
-                visual.removeVert(v);
+                try {
+                    visual.removeVert(v);
+                } catch (IOException ioException) {
+                    System.err.println("Failed to remove the vertex.");
+                }
 
                 delVertexText.setText("");
             }
@@ -385,7 +402,11 @@ public class GUI {
                 delEdgeText.setText("");
 
                 graph.deleteEdge(v1, v2);
-                visual.removeEdge(v1, v2);
+                try {
+                    visual.removeEdge(v1, v2);
+                } catch (IOException ioException) {
+                    System.err.println("Failed to remove an edge");
+                }
             }
 
 
