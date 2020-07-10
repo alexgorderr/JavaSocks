@@ -136,6 +136,10 @@ public class GUI {
                 System.out.println(container.getSize().width);
 
 
+                delVertexText.setText("Example: 3");
+                addEdgeText.setText("Example: 1->2=3");
+                changeEdgeText.setText("Example: 1->2=4");
+                delEdgeText.setText("Example: 1->2");
 
 
                 visual = new Vizualizator();
@@ -159,37 +163,48 @@ public class GUI {
 
     class RandomActionListener implements ActionListener { // тоже можно проверить
         public void actionPerformed (ActionEvent e) {
-            int vertexes = (int)spinnerV.getValue();
-            int edges = (int)spinnerE.getValue();
-            if(vertexes <= 0) {
-                JOptionPane.showMessageDialog(null, "Wrong vertexes input", "Message", JOptionPane.PLAIN_MESSAGE);
-            }
-            else if(edges <= 0 || edges >= vertexes*(vertexes-1)) {
-                JOptionPane.showMessageDialog(null, "Wrong edges input", "Message", JOptionPane.PLAIN_MESSAGE);
-            }
-            else {
-                int[][] matr = new int[vertexes][vertexes];
-                String str = "";
-                for(int i = 0; i < vertexes; i++) {
-                    for(int j = 0; j < vertexes; j++) {
-                        Random rand = new Random();
-                        matr[i][j] = (edges > 0 ? rand.nextInt(20) : 0);
-                        edges--;
-                        str+=matr[i][j] + " ";
-                    }
-                    str+= "\n";
+
+
+
+            if(permission){
+
+                delVertexText.setText("Example: 3");
+                addEdgeText.setText("Example: 1->2=3");
+                changeEdgeText.setText("Example: 1->2=4");
+                delEdgeText.setText("Example: 1->2");
+
+                int vertexes = (int)spinnerV.getValue();
+                int edges = (int)spinnerE.getValue();
+                if(vertexes <= 0) {
+                    JOptionPane.showMessageDialog(null, "Wrong vertexes input", "Message", JOptionPane.PLAIN_MESSAGE);
                 }
-                textIn.setText(str);
-                graph = new Graph(str);
+                else if(edges <= 0 || edges >= vertexes*(vertexes-1)) {
+                    JOptionPane.showMessageDialog(null, "Wrong edges input", "Message", JOptionPane.PLAIN_MESSAGE);
+                }
+                else {
+                    int[][] matr = new int[vertexes][vertexes];
+                    String str = "";
+                    for(int i = 0; i < vertexes; i++) {
+                        for(int j = 0; j < vertexes; j++) {
+                            Random rand = new Random();
+                            matr[i][j] = (edges > 0 ? rand.nextInt(20) : 0);
+                            edges--;
+                            str+=matr[i][j] + " ";
+                        }
+                        str+= "\n";
+                    }
+                    textIn.setText(str);
+                    graph = new Graph(str);
 
-                visual = new Vizualizator();
-                visual.initMatrix(matr, matr[0].length);
-                visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
-                /*container.add(visual);
-                container.setVisible(true);*/
+                    visual = new Vizualizator();
+                    visual.initMatrix(matr, matr[0].length);
+                    visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
 
-                centerContainer.add(visual);
-                centerContainer.setVisible(true);
+                    centerContainer.add(visual);
+                    centerContainer.setVisible(true);
+
+            }
+
 
             }
         }
