@@ -161,7 +161,7 @@ public class GUI {
                 delEdgeButton.setEnabled(true);
                 try {
                     graph = new Graph(textIn.getText());
-                } catch (Exception exception) {
+                } catch (NumberFormatException exception) {
                     System.err.println("Failed to create a graph");
                 }
                 int[][] matr = graph.getMatrix();
@@ -229,11 +229,15 @@ public class GUI {
                 }
                 for(int i = 0; i < vertexes; i++) {
                     for (int j = 0; j < vertexes; j++) {
-                        str += matr[i][j] + " ";
+                        if(j==vertexes-1)
+                            str+=matr[i][j];
+                        else
+                            str += matr[i][j] + " ";
                     }
-                    str += "\n";
+                    if(i!=vertexes-1)
+                        str += "\n";
                 }
-
+                //System.out.printl(str);
                 /*for(int i = 0; i < vertexes; i++) {
                     for(int j = 0; j < vertexes; j++) {
                         Random rand = new Random();
@@ -245,8 +249,8 @@ public class GUI {
                 }*/
                 textIn.setText(str);
                 try {
-                    graph = new Graph(str);
-                } catch (Exception exception) {
+                    graph = new Graph(textIn.getText());
+                } catch (NumberFormatException exception) {
                     System.err.println("Failed to create a graph");
                 }
                 centerContainer.remove(visual);

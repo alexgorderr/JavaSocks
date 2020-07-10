@@ -13,7 +13,7 @@ public class Graph {
         matrix = new int[0][0];
     }
 
-    public Graph(String var1) throws Exception {
+    public Graph(String var1) throws NumberFormatException {
         curK = 0;
         curI = 0;
         curJ = 0;
@@ -27,10 +27,10 @@ public class Graph {
         for (String it : arr) {
             try{
                 matrix[i][j] = Integer.parseInt(it);}
-            catch(Exception e){
+            catch(NumberFormatException e){
                 System.err.println("You entered the wrong data type:use the int type.");}
             if(matrix[i][j]<0)
-                throw new Exception("The matrix cannot have negative numbers!");
+                System.err.println("The matrix cannot have negative numbers!");
             j++;
         }
         i++;
