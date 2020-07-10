@@ -168,9 +168,6 @@ public class GUI {
 
     class RandomActionListener implements ActionListener { // тоже можно проверить
         public void actionPerformed (ActionEvent e) {
-
-
-
             if(permission){
 
                 delVertexText.setText("Example: 3");
@@ -212,10 +209,6 @@ public class GUI {
                         }
 
                     }
-
-                    str += "\n";
-                    str += "\n";
-
                     for(int i = 0; i < vertexes; i++) {
                         for (int j = 0; j < vertexes; j++) {
                             str += matr[i][j] + " ";
@@ -238,7 +231,6 @@ public class GUI {
                     } catch (Exception exception) {
                         System.err.println("Failed to create a graph");
                     }
-
                     visual = new Vizualizator();
                     visual.initMatrix(matr, matr[0].length);
                     visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
@@ -262,7 +254,9 @@ public class GUI {
            // graph.print();
 
             visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
-
+            if((graph.getI() == graph.getN()) && (graph.getJ() == graph.getN()) && (graph.getK() == graph.getN())) {
+                textOut.setText(graph.print());
+            }
         }
     }
 
@@ -272,7 +266,7 @@ public class GUI {
             permission = false;
             graph.FloydWarshall();
             visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
-
+            textOut.setText(graph.print());
 
            /* str += "\n";
             str += "\n";
@@ -295,10 +289,12 @@ public class GUI {
             if(permission){
                 graph.updateMatrix();
                 visual.addVert();
+                textIn.setText(graph.print());
             }
 
         }
     }
+
     class addEdgeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             //исключения и проверка корректности ввода
@@ -326,12 +322,14 @@ public class GUI {
                 } catch (IOException ioException) {
                     System.err.println("Failed to add an edge");
                 }
+                textIn.setText(graph.print());
             }
 
 
 
         }
     }
+
     class changeButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
@@ -354,7 +352,7 @@ public class GUI {
 
                 graph.changeEdge(v1, v2, edge);
                 visual.changeEdge(v1, v2, edge);
-
+                textIn.setText(graph.print());
             }
 
         }
@@ -374,21 +372,17 @@ public class GUI {
                 } catch (IOException ioException) {
                     System.err.println("Failed to remove the vertex.");
                 }
-
+                textIn.setText(graph.print());
                 delVertexText.setText("");
             }
-
-
-
         }
     }
 
     class delEdgeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
 
-          //исключения и проверка корректности ввода
+        //исключения и проверка корректности ввода
             //формат ввода: v1->v2
-
             if(permission){
                 String v = delEdgeText.getText().toString();
                 int splitIndex = v.indexOf("->",0);
@@ -407,11 +401,9 @@ public class GUI {
                 } catch (IOException ioException) {
                     System.err.println("Failed to remove an edge");
                 }
+                textIn.setText(graph.print());
             }
-
-
         }
     }
-
 }
 

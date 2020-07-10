@@ -111,6 +111,7 @@ public class Vizualizator extends JPanel{
         this.revalidate();
 
     }
+
     public void functionVisual(int h, int w) {
 
         graph = new mxGraph();
@@ -291,13 +292,13 @@ public class Vizualizator extends JPanel{
             vertName[vertID-1] = -1;
 
         }
-        else{
-            throw new IOException("This vertex does not exist");        }
+        else {
+            throw new IOException("This vertex does not exist");
+        }
 
     }
 
     public void addEdge(int v1, int v2, int edge) throws IOException {
-
 
         if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
 
@@ -310,30 +311,25 @@ public class Vizualizator extends JPanel{
 
             functionVisual(height, width);
 
-
             graph.getModel().endUpdate();
-
         }
-        else{
+        else {
             throw new IOException("This edge does not exist");
         }
-
-
     }
 
     public void changeEdge(int v1, int v2, int newEdge){
         try{
-        if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
-            graph.getModel().beginUpdate();
-            removeEdge(v1, v2);
-            addEdge(v1, v2, newEdge);
-            graph.getModel().endUpdate();
-        }}
+            if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
+                graph.getModel().beginUpdate();
+                removeEdge(v1, v2);
+                addEdge(v1, v2, newEdge);
+                graph.getModel().endUpdate();
+            }
+        }
         catch(IOException e){
             System.err.println("This edge can't be change");
         }
-
-
     }
 
     public void removeEdge(int v1, int v2) throws IOException {
@@ -348,12 +344,10 @@ public class Vizualizator extends JPanel{
             functionVisual(height, width);
             //m = 0;
             graph.getModel().endUpdate();
-
         }
         else{
             throw new IOException("This edge does not exist");
         }
-
     }
 
     private void displayStepResult(int vert){//матрица достижимсти на текущем шаге
