@@ -8,6 +8,10 @@ public class Graph {
     private int[][] matrix;
     static int I = 99999999; // Integer.MAX_VALUE
 
+    public Graph() {
+        n = curI = curJ = curK = 0;
+        matrix = new int[0][0];
+    }
 
     public Graph(String var1) throws Exception {
         curK = 0;
@@ -26,7 +30,7 @@ public class Graph {
             catch(Exception e){
                 System.err.println("You entered the wrong data type:use the int type.");}
             if(matrix[i][j]<0)
-                throw new Exception("The matrix cannot negative numbers!");
+                throw new Exception("The matrix cannot have negative numbers!");
             j++;
         }
         i++;
@@ -106,37 +110,6 @@ public class Graph {
 
             }
         }
-        /*if(curJ < n) {
-            if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) && (curI != curJ) ) {
-                changeMatrix(matrix[curI][curK] + matrix[curK][curJ]);
-            }
-            curJ++;
-        }
-        else if(curJ == n) { // обязательно выполняется
-            curJ = 0;
-            if(curI < n) {
-                // то же самое
-                if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) && (curI != curJ) ) {
-                    changeMatrix(matrix[curI][curK] + matrix[curK][curJ]);
-                }
-                curI++;
-            }
-            else if(curI == n)  { // обязательно выполняется
-                // то же самое
-                curI = 0;
-                if(curK < n) {
-                    if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) && (curI != curJ) ) {
-                        changeMatrix(matrix[curI][curK] + matrix[curK][curJ]);
-                    }
-                    curK++;
-                }
-                else {
-                    return;
-                }
-            }
-
-        }*/
-
     }
 
     public String print(){
@@ -197,6 +170,7 @@ public class Graph {
             matrix[v1-1][v2-1] = 0;
         }
     }
+
     public void changeEdge(int v1, int v2, int newEdge){
         if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-2] != 0){//ребро существует
             matrix[v1-1][v2-2] = newEdge;

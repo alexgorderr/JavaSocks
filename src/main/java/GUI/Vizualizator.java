@@ -37,8 +37,8 @@ public class Vizualizator extends JPanel{
 
     private mxGraph graph;
     private mxGraph stepGraph;
-    private mxGraphComponent graphComponent;//модель графа
-    private mxGraphComponent stepGraphComponent;//модель графа достижимости на текущем шаге
+    private mxGraphComponent graphComponent; // модель графа
+    private mxGraphComponent stepGraphComponent; // модель графа достижимости на текущем шаге
     private Object parent;
     private Object points[];
     //private HashMap <Object, HashMap<Object, Object>> edges;
@@ -406,11 +406,7 @@ public class Vizualizator extends JPanel{
 
     }
 
-
     public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
-
-        //this.remove(graphComponent);
-
 
         graph = new mxGraph();
         parent = graph.getDefaultParent();
@@ -463,5 +459,20 @@ public class Vizualizator extends JPanel{
         this.revalidate();
     }
 
+    public mxGraph returnGraph() {
+        return this.graph;
+    }
+
+    public void setGraph(mxGraph graph) {
+        this.graph = new mxGraph();
+        this.graphComponent = new mxGraphComponent(graph);
+        graph.getModel().beginUpdate();
+        this.graph = graph;
+        this.parent = this.graph.getDefaultParent();
+        graph.getModel().endUpdate();
+        graph.refresh();
+        graphComponent.refresh();
+        graphComponent.repaint();
+    }
 }
 

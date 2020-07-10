@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>untitled</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>Proj</artifactId>
+    <version>6.9420-SNAPSHOT</version>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/com.github.vlsi.mxgraph/jgraphx -->
@@ -52,8 +52,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>14</source>
-                    <target>14</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>
