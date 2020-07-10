@@ -11,6 +11,7 @@ import Graph.*;
 
 public class GUI {
     private Graph graph;
+    private boolean permission = true;
     private JLabel labelIn = new JLabel("Input matrix:");
     private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 4\n2 1 1 3\n2 5 3 0");
     private JLabel labelOut = new JLabel("Output matrix:");
@@ -39,9 +40,11 @@ public class GUI {
     private JTextField delEdgeText = new JTextField("", 5);
     private JButton delEdgeButton = new JButton("Delete edge");
 
-    private Vizualizator visual = new Vizualizator();
+    private Vizualizator visual = null;
 
     private Container container = new Container();
+    Container centerContainer = new Container();
+
     public GUI() {
         JFrame frame = new JFrame("Program");
         frame.setBounds(0, 0, 1240, 640);
@@ -74,11 +77,13 @@ public class GUI {
         westContainer.add(textOut);
 
 
-        Container centerContainer = new Container(); // контейнер под размещение в нем графа
-
+        //centerContainer = new Container(); // контейнер под размещение в нем графа
+        //centerContainer.
+        centerContainer.setLayout(new FlowLayout());
 
 
         Container eastContainer = new Container();
+
         eastContainer.setLayout(new GridLayout(5, 2));
         eastContainer.add(new JPanel());
         addVertex.addActionListener(new addVertexListener());
@@ -117,6 +122,8 @@ public class GUI {
     // тут классы "реагенты" кнопочек
     class InputButtonListener implements ActionListener { // тоже можно проверить
         public void actionPerformed (ActionEvent e) {
+            if(visual != null)
+                return;
 
             if(textIn.getText().length() == 0) {
                 JOptionPane.showMessageDialog(null, "Your matrix is empty", "Message", JOptionPane.PLAIN_MESSAGE);
@@ -125,10 +132,27 @@ public class GUI {
                 graph = new Graph(textIn.getText());
                 int[][] matr = graph.getMatrix();
 
+                System.out.println(container.getSize().height);
+                System.out.println(container.getSize().width);
+
+
+
+
+                visual = new Vizualizator();
                 visual.initMatrix(matr, matr[0].length);
-                visual.functionVisual();
-                container.add(visual);
-                container.setVisible(true);
+                visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
+                int h = centerContainer.getSize().height;
+                int w = centerContainer.getSize().width;
+                System.out.println(h);
+                System.out.println(w);
+                centerContainer.add(visual);
+                container.revalidate();
+                //centerContainer.setVisible(false);
+                centerContainer.setVisible(true);
+                /*container.add(visual);
+                container.setVisible(false);
+                container.setVisible(true);*/
+
             }
         }
     }
@@ -157,59 +181,154 @@ public class GUI {
                 }
                 textIn.setText(str);
                 graph = new Graph(str);
-                Vizualizator visual = new Vizualizator();
+
+                visual = new Vizualizator();
                 visual.initMatrix(matr, matr[0].length);
-                visual.functionVisual();
-                container.add(visual);
-                container.setVisible(true);
+                visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
+                /*container.add(visual);
+                container.setVisible(true);*/
+
+                centerContainer.add(visual);
+                centerContainer.setVisible(true);
+
             }
         }
     }
 
     class StepListener implements ActionListener { // проверить и имплеменитровать графику
         public void actionPerformed(ActionEvent e) {
+
+            //graph.print();
+            permission = false;
             graph.FWStep();
+           // graph.print();
+
+            visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
+
         }
     }
 
     class QuickListener implements ActionListener { // проверить и имплементировать графику
         public void actionPerformed(ActionEvent e) {
+
+            permission = false;
             graph.FloydWarshall();
-            visual.initMatrix(graph.getMatrix(), graph.getMatrix().length);
+            visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
+
         }
     }
 
     class addVertexListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            int[][] matr = graph.getMatrix();
-            int num = matr.length;
-            matr = new int[num+1][num+1];
-            // не закончено
+            //исключения и проверка корректности ввода
+            //формат ввода - число(номер вершины)
+            //добавляем вершину в матрицу и увеличиваем n
+            if(permission){
+                graph.updateMatrix();
+                visual.addVert();
+            }
+
         }
     }
     class addEdgeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            int from, to, weight;
-            Scanner in = new Scanner(addEdgeText.getText());
-            from = in.nextInt();
-            to = in.nextInt();
-            weight = in.nextInt();
-            // не закончено
+            //исключения и проверка корректности ввода
+            //формат ввода: v1->v2=число
+
+            if(permission){
+
+                String v = addEdgeText.getText().toString();
+                int splitIndex1 = v.indexOf("->",0);
+                int splitIndex2 = v.indexOf("=", 0);
+
+                String first = v.substring(0, splitIndex1);
+                String second = v.substring(splitIndex1 + 2, splitIndex2);
+                String third = v.substring(splitIndex2 + 1);
+
+                int v1 = Integer.parseInt(first);
+                int v2 = Integer.parseInt(second);
+                int edge = Integer.parseInt(third);
+
+                delEdgeText.setText("");
+
+                graph.addEdge(v1, v2, edge);
+                visual.addEdge(v1, v2, edge);
+            }
+
+
+
         }
     }
     class changeButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // не сделано
+
+            //формат ввода: v1->v2=3
+            if(permission){
+
+                String v = addEdgeText.getText().toString();
+                int splitIndex1 = v.indexOf("->",0);
+                int splitIndex2 = v.indexOf("=", 0);
+
+                String first = v.substring(0, splitIndex1);
+                String second = v.substring(splitIndex1 + 2, splitIndex2);
+                String third = v.substring(splitIndex2 + 1);
+
+                int v1 = Integer.parseInt(first);
+                int v2 = Integer.parseInt(second);
+                int edge = Integer.parseInt(third);
+
+                delEdgeText.setText("");
+
+                graph.changeEdge(v1, v2, edge);
+                visual.changeEdge(v1, v2, edge);
+
+            }
+
         }
     }
+
     class delVertexListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // не сделано
+
+            //исключения и проверка корректности ввода
+            //формат ввода: нет ввода
+            if(permission){
+                Scanner in = new Scanner(delVertexText.getText());
+                int v = in.nextInt();
+                graph.deleteVert(v);
+                visual.removeVert(v);
+
+                delVertexText.setText("");
+            }
+
+
+
         }
     }
+
     class delEdgeListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            // не сделано
+
+          //исключения и проверка корректности ввода
+            //формат ввода: v1->v2
+
+            if(permission){
+                String v = delEdgeText.getText().toString();
+                int splitIndex = v.indexOf("->",0);
+
+                String first = v.substring(0, splitIndex);
+                String second = v.substring(splitIndex + 2);
+
+                int v1 = Integer.parseInt(first);
+                int v2 = Integer.parseInt(second);
+
+                delEdgeText.setText("");
+
+                graph.deleteEdge(v1, v2);
+                visual.removeEdge(v1, v2);
+            }
+
+
         }
     }
 

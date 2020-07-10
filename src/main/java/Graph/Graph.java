@@ -10,6 +10,9 @@ public class Graph {
 
 
     public Graph(String var1) {
+        curK = 0;
+        curI = 0;
+        curJ = 0;
         Scanner var2 = new Scanner(var1);
         var2.useDelimiter("\n");
         int i = 0, j = 0;
@@ -58,7 +61,47 @@ public class Graph {
 
     public void FWStep() {
 
-        if(curJ < n) {
+        if(curK == n){
+            System.out.println("finish");
+            return;
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j)
+                    matrix[i][j] = 0;
+                else if (matrix[i][j] == 0)
+                    matrix[i][j] = I;
+            }
+        }
+
+        if(curI < n && curJ >= n) {
+            curJ = 0;
+            curI++;
+        }
+        if(curK < n && curI >= n) {
+            curI = 0;
+            curK++;
+        }
+
+        System.out.println(curK);
+        System.out.println(curI);
+
+        for (; curK < n; curK++) {
+            for (; curI < n; curI++) {
+                for (curJ = 0; curJ < n; curJ++) {
+                    //System.out.println(curJ);
+                    if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) ) {
+                        matrix[curI][curJ] = matrix[curI][curK] + matrix[curK][curJ];
+                        System.out.println("((((");
+                    }
+
+                }
+                return;
+
+            }
+        }
+        /*if(curJ < n) {
             if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) && (curI != curJ) ) {
                 changeMatrix(matrix[curI][curK] + matrix[curK][curJ]);
             }
@@ -87,7 +130,8 @@ public class Graph {
                 }
             }
 
-        }
+        }*/
+
     }
 
     public String print(){
@@ -119,6 +163,48 @@ public class Graph {
     public int getK() { return curK;}
 
     public void setMatrix(int[][] newMatrix) {
+
+    }
+
+    public void updateMatrix(){
+
+        n = n + 1;
+        matrix = java.util.Arrays.copyOf(matrix, n);
+
+        for(int i = 0; i < n-1; i++) {
+            matrix[i] = java.util.Arrays.copyOf(matrix[i], n);
+        }
+        matrix[n-1] = new int[n];
+
+    }
+
+    public void deleteEdge(int v1, int v2){
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n){
+            System.out.println("start delete");
+
+            matrix[v1-1][v2-1] = 0;
+        }
+    }
+    public void changeEdge(int v1, int v2, int newEdge){
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-2] != 0){//ребро существует
+            matrix[v1-1][v2-2] = newEdge;
+        }
+    }
+
+    public void addEdge(int v1, int v2, int newEdge){
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-2] == 0){//ребро не существует
+            matrix[v1-1][v2-2] = newEdge;
+        }
+    }
+
+    public void deleteVert(int v){
+        //убираем все связи вершины
+        if(v > 0 && v <= n){
+            for(int i = 0; i < n; i++){
+                matrix[i][v-1] = -1;
+                matrix[v-1][i] = -1;
+            }
+        }
 
     }
 }
