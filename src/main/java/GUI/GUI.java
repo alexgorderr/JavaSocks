@@ -184,7 +184,41 @@ public class GUI {
                 else {
                     int[][] matr = new int[vertexes][vertexes];
                     String str = "";
+
+                    int[] randomArray = new int[edges];
+                    for(int i = 0; i < edges; i++){
+                        Random rand = new Random();
+                        randomArray[i] = rand.nextInt(20);
+                        if(randomArray[i] == 0){
+                            i--;
+                        }
+                    }
+
+                    for(int i = 0; i < edges; i++){
+                        Random rand = new Random();
+                       // Random rand_k = new Random();
+                        int k = rand.nextInt(vertexes);
+                        int j = rand.nextInt(vertexes);
+                        if(matr[k][j] > 0){
+                            i--;
+                        }
+                        else {
+                            matr[k][j] = randomArray[i];
+                        }
+
+                    }
+
+                    str += "\n";
+                    str += "\n";
+
                     for(int i = 0; i < vertexes; i++) {
+                        for (int j = 0; j < vertexes; j++) {
+                            str += matr[i][j] + " ";
+                        }
+                        str += "\n";
+                    }
+
+                    /*for(int i = 0; i < vertexes; i++) {
                         for(int j = 0; j < vertexes; j++) {
                             Random rand = new Random();
                             matr[i][j] = (edges > 0 ? rand.nextInt(20) : 0);
@@ -192,7 +226,7 @@ public class GUI {
                             str+=matr[i][j] + " ";
                         }
                         str+= "\n";
-                    }
+                    }*/
                     textIn.setText(str);
                     graph = new Graph(str);
 
@@ -229,6 +263,17 @@ public class GUI {
             permission = false;
             graph.FloydWarshall();
             visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
+
+
+           /* str += "\n";
+            str += "\n";
+
+            for(int i = 0; i < vertexes; i++) {
+                for (int j = 0; j < vertexes; j++) {
+                    str += matr[i][j] + " ";
+                }
+                str += "\n";
+            }*/
 
         }
     }
