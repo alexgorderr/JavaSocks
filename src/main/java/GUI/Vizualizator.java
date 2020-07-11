@@ -1,19 +1,23 @@
 package GUI;
 
-import com.mxgraph.layout.mxCircleLayout;
+
 import com.mxgraph.layout.mxParallelEdgeLayout;
 import com.mxgraph.model.mxCell;
+
 import com.mxgraph.swing.mxGraphComponent;
+//import com.mxgraph.mxCa
+import com.mxgraph.canvas.mxGraphics2DCanvas;
+import com.mxgraph.swing.view.mxCellEditor;
 import com.mxgraph.util.mxEvent;
+import com.mxgraph.util.mxEvent.*;
 
+import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
-import com.mxgraph.view.mxGraph;
-
-import com.mxgraph.view.mxEdgeStyle;
-//import com.mxgraph.view.mxStylesheet;
+import com.mxgraph.view.*;
+import com.mxgraph.util.mxUndoableEdit;
 
 
-import com.mxgraph.util.mxConstants;
+
 
 
 
@@ -26,6 +30,8 @@ import java.util.*;
 
 
 public class Vizualizator extends JPanel{
+    mxCellEditor editor;
+
     private static int n = 0;
     private static int curCount = 0;
     private int height;
@@ -33,6 +39,7 @@ public class Vizualizator extends JPanel{
     int[][] matrix;//заданная изначально матрица
     int[][] resultMatrix;//матрица достижимости
     int[] vertName;
+    private boolean flag = false;
 
 
     private mxGraph graph;
@@ -41,12 +48,16 @@ public class Vizualizator extends JPanel{
     private mxGraphComponent stepGraphComponent; // модель графа достижимости на текущем шаге
     private Object parent;
     private Object points[];
-    //private HashMap <Object, HashMap<Object, Object>> edges;
+
     private MouseAdapter mouseAdapter;
+
    // private mxEventSource.mxIEventListener listener;
-    private MouseMotionListener eventListener;
+    //private MouseMotionListener eventListener;
 
     public void updateResultMatrix(int[][] matrix, int curN){
+        //editor.getEditor()
+
+        flag = true;//алгоритм работает
         //this.setSize();
 
         if(curN != n)
@@ -119,19 +130,47 @@ public class Vizualizator extends JPanel{
         width = w;
         this.setSize(h, w);
 
-
-       // boolean permission = false;
-
        if(mouseAdapter == null)
             mouseAdapter = new MouseAdapter() {
+
+                @Override
+                public void mouseMoved(MouseEvent e) {
+
+                    graphComponent.setEnabled(true);
+                    mxCell cell;
+                    cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
+
+
+                    if(cell != null){
+                        if(cell.isVertex()){
+                            double x = cell.getGeometry().getCenterX();
+                            double y = cell.getGeometry().getCenterY();
+                            if(Math.abs(e.getX()-x) < 10 && Math.abs(e.getY() - y) < 10)
+                                graphComponent.setEnabled(false);
+
+                            graphComponent.getGraph().setCellsMovable(true);
+                        }
+                        if(cell.isEdge()){
+                            graphComponent.getGraph().setCellsMovable(false);
+                        }
+                    }
+                    super.mouseMoved(e);
+                }
+
                 @Override
                 public void mouseClicked(MouseEvent mouseEvent) {
-                    //permission = true;
+
+                    if(!flag)
+                        return;
+
                     mxCell cell = null;
+
+
                     if(graphComponent != null) {
                         cell = (mxCell) graphComponent.getCellAt(mouseEvent.getX(), mouseEvent.getY());
                     }
-                    if(cell != null)
+
+                    if(cell != null && cell.isVertex())
                         displayStepResult((int)cell.getValue());
                     else{
                         if(stepGraphComponent != null){
@@ -140,62 +179,9 @@ public class Vizualizator extends JPanel{
                     }
                     super.mouseClicked(mouseEvent);
                 }
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    //System.out.println("?????//");
-                    //graphComponent.getToolkit().
-                    //graphComponent.getCom
-                    mxCell cell = null;
-                    cell = (mxCell) graphComponent.getCellAt(e.getX(), e.getY());
-                    if(cell != null) {
 
-                        if(cell.isVertex() && cell.isConnectable()){
-                            System.out.println("*****");
-                            super.mouseDragged(e);
-                        }else{
-                            //mxGraph.prototype.resetEdgesOnMove:
-                            /*graph.getModel();
-                            graph.startEditingAtCell(change.child);
-                            grap.start*/
-
-                            /*if(cell.isConnectable())
-                                return;*/
-                           // graphComponent.getCursor().
-                            //super.mouseReleased();
-                           // super.mouseReleased(e);
-                        }
-                        //return;
-                        //
-
-                    }else {
-                        return;
-                        //System.out.println("?????//");
-                    }
-
-                    //super.mouseDragged(e);
-                }
 
             };
-       /*if(eventListener == null)
-           eventListener = new EventListener() {
-               @Override
-               public String toString() {
-                   return super.toString();
-               }
-           }*/
-       /* eventListener = new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent mouseEvent) {
-                System.out.println("$$$$$");
-                mxCell cell = null;
-                cell = (mxCell) graphComponent.getCellAt(mouseEvent.getX(), mouseEvent.getY());
-                if(cell != null)
-                    super.mouseDragged(mouseEvent);
-            }
-        };*/
-
-
-
 
         parent = graph.getDefaultParent();
         graph.getModel().beginUpdate();
@@ -209,26 +195,18 @@ public class Vizualizator extends JPanel{
             //points[i] - вершина
                 if(vertName[i] == -1)//вершина удалена
                     continue;
-                points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18, "shape=ellipse");
-                //stepGraph.insertVertex()
+                points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 40, 40, "shape=ellipse");
+
                 phi0 += phi;
                 vertName[i] = 1;
 
         }
 
+
             for(int i = 0; i < n; i++){
                 for(int j = 0; j < n; j++){
                     if(matrix[i][j] > 0) {
-                        //var style = graph.getStylesheet().getDefaultEdgeStyle();
-
-                        //Object o = graph.createEdge(parent, null, matrix[i][j], points[i], points[j],"edgeStyle=myEdgeStyle");
-                        //graph.createEdge()
                         Object o = graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
-                        //graph.getModel().is
-                        //o.
-                        //graph.getModel().setStyle(, "edgeStyle=myEdgeStyle");
-                        //style.put("strokeColor", standartColor);
-                        //graph.insertEdge(parent, null, matrix[i][j], points[i], points[j]);
                     }
                 }
             }
@@ -238,18 +216,14 @@ public class Vizualizator extends JPanel{
         mxParallelEdgeLayout layout = new mxParallelEdgeLayout(graph);
         layout.execute(graph.getDefaultParent());
 
-        //graph.getModel().addListener(mxEvent.CHANGE, listener);
-
-
         graphComponent = new mxGraphComponent(graph);
 
-
         graphComponent.getGraphControl().addMouseListener(mouseAdapter);
-
-
-        //graphComponent.getGraphControl().removeMouseMotionListener(graphComponent.getMouseMotionListeners()[0]);
         graphComponent.getGraphControl().addMouseMotionListener(mouseAdapter);
 
+        graphComponent.getGraph().setCellsMovable(false);
+        graphComponent.getGraph().setCellsEditable(false);
+        graphComponent.getGraph().setCellsResizable(false);
 
         this.add(graphComponent);
         this.revalidate();
@@ -261,10 +235,9 @@ public class Vizualizator extends JPanel{
         upDateVertCount(true);
 
         graph.getModel().beginUpdate();
-        points[n-1] = graph.insertVertex(parent, null, n, 300, 300, 18, 18, "shape=ellipse");
+        points[n-1] = graph.insertVertex(parent, null, n, 300, 300, 40, 40, "shape=ellipse");
         vertName[n - 1] = 1;
         graph.getModel().endUpdate();
-
 
     }
 
@@ -272,7 +245,6 @@ public class Vizualizator extends JPanel{
 
         if(vertID > 0 && vertID < n + 1){
             curCount--;
-            //upDateVertCount(false);
             graph.getModel().beginUpdate();
 
             Object pointsForRemove[] = new Object[1];
@@ -336,14 +308,13 @@ public class Vizualizator extends JPanel{
 
         if(v1 > 0 && v2 > 0 && v1 <= n && v2 <= n && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
 
-            System.out.println("next step");
             matrix[v1-1][v2-1] = 0;
 
             graph.getModel().beginUpdate();
             this.remove(graphComponent);
             functionVisual(height, width);
-            //m = 0;
             graph.getModel().endUpdate();
+
         }
         else{
             throw new IOException("This edge does not exist");
@@ -358,11 +329,9 @@ public class Vizualizator extends JPanel{
         this.setVisible(false);
         this.setVisible(true);
 
-
         stepGraph = new mxGraph();
         stepGraph.getModel().beginUpdate();
         Object[] stepPoints = new Object[n];
-
 
         double phi0 = 0;
         double phi = 2 * Math.PI / n;
@@ -371,7 +340,7 @@ public class Vizualizator extends JPanel{
         for (int i = 0; i < points.length; i++) {
 
             if(vertName[i] > 0){
-                stepPoints[i] = stepGraph.insertVertex(stepGraph.getDefaultParent(), null, i+1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18,"shape=ellipse" );
+                stepPoints[i] = stepGraph.insertVertex(stepGraph.getDefaultParent(), null, i+1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 40, 40,"shape=ellipse" );
                 phi0 += phi;
             }
 
@@ -406,7 +375,7 @@ public class Vizualizator extends JPanel{
 
     }
 
-    public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
+    /*public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
 
         graph = new mxGraph();
         parent = graph.getDefaultParent();
@@ -421,7 +390,7 @@ public class Vizualizator extends JPanel{
             //points[i] - вершина
             if (vertName[i] == -1)//вершина удалена
                 continue;
-            points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 18, 18, "shape=ellipse");
+            points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 40, 40, "shape=ellipse");
             phi0 += phi;
         }
 
@@ -440,7 +409,7 @@ public class Vizualizator extends JPanel{
             }
         }
 
-        graph.getModel().endUpdate();
+        graph.getModel().endUpdate();*/
 
        // mxParallelEdgeLayout layoutParallel = new mxParallelEdgeLayout(graph);
        // mxCircleLayout layoutCircle = new mxCircleLayout(graph);
@@ -448,7 +417,7 @@ public class Vizualizator extends JPanel{
       //  layoutCircle.execute(graph.getDefaultParent());
 
         //graphComponent - наша текущая модель
-        this.remove(graphComponent);
+     /*   this.remove(graphComponent);
 
         stepGraphComponent = new mxGraphComponent(graph);
         this.add(stepGraphComponent);
@@ -457,22 +426,8 @@ public class Vizualizator extends JPanel{
         //this.add(graphComponent);
 
         this.revalidate();
-    }
+    }*/
 
-    public mxGraph returnGraph() {
-        return this.graph;
-    }
 
-    public void setGraph(mxGraph graph) {
-        this.graph = new mxGraph();
-        this.graphComponent = new mxGraphComponent(graph);
-        graph.getModel().beginUpdate();
-        this.graph = graph;
-        this.parent = this.graph.getDefaultParent();
-        graph.getModel().endUpdate();
-        graph.refresh();
-        graphComponent.refresh();
-        graphComponent.repaint();
-    }
 }
 
