@@ -1,6 +1,6 @@
 package GUI;
 
-import org.junit.Assert;
+//import org.junit.Assert;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -35,7 +35,7 @@ class VizualizatorTest {
             viz.addEdge(4,5,5);
         }
         catch(IOException e){
-            Assert.assertEquals("This edge does not exist",e.getMessage());
+            assertEquals("This edge does not exist",e.getMessage());
         }
     }
     @Test
@@ -71,7 +71,7 @@ class VizualizatorTest {
             viz.addEdge(3,4,5);
         }
         catch(IOException e){
-            Assert.assertEquals("This edge does not exist",e.getMessage());
+            assertEquals("This edge does not exist",e.getMessage());
         }
     }
 
@@ -87,7 +87,7 @@ class VizualizatorTest {
             viz.addEdge(3,4,5);
         }
         catch(IOException e){
-            Assert.assertEquals("This edge does not exist",e.getMessage());
+            assertEquals("This edge does not exist",e.getMessage());
         }
     }
 
@@ -116,7 +116,7 @@ class VizualizatorTest {
             viz.addEdge(3, 4, 5);
             viz.changeEdge(5, 6, 10);
         } catch (IOException e) {
-            Assert.assertEquals("This edge does not exist", e.getMessage());
+            assertEquals("This edge does not exist", e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ class VizualizatorTest {
                 viz.removeEdge(3,4);
                 viz.removeEdge(3,4);}
             catch(IOException e){
-                Assert.assertEquals("This edge does not exist",e.getMessage());
+                assertEquals("This edge does not exist",e.getMessage());
             }
         }
 
@@ -162,7 +162,8 @@ class VizualizatorTest {
             viz.removeVert(4);
             viz.removeVert(4);}
         catch (IOException e){
-            Assert.assertEquals("This vertex does not exist",e.getMessage()); }
+            assertEquals("This vertex does not exist",e.getMessage()); }
         }
 
     }
+
