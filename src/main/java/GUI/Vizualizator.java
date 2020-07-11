@@ -160,11 +160,10 @@ public class Vizualizator extends JPanel{
                 @Override
                 public void mouseClicked(MouseEvent mouseEvent) {
 
-                    if(!flag)
+                    if(!flag)//алгоритм еще не работает
                         return;
 
                     mxCell cell = null;
-
 
                     if(graphComponent != null) {
                         cell = (mxCell) graphComponent.getCellAt(mouseEvent.getX(), mouseEvent.getY());
@@ -367,7 +366,37 @@ public class Vizualizator extends JPanel{
         stepGraph.getModel().endUpdate();
         stepGraphComponent = new mxGraphComponent(stepGraph);
 
-        stepGraphComponent.getGraphControl().addMouseListener(mouseAdapter);
+        MouseAdapter stepMouseAdapter = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                //super.mouseClicked(e);
+                if(!flag)//алгоритм еще не работает
+                    return;
+
+                mxCell cell = null;
+
+                if(stepGraphComponent != null) {
+                    cell = (mxCell) stepGraphComponent.getCellAt(mouseEvent.getX(), mouseEvent.getY());
+                }
+
+                if(cell != null && cell.isVertex())
+                    displayStepResult((int)cell.getValue());
+                else{
+                    if(stepGraphComponent != null){
+                        returnGraphModel();
+                    }
+                }
+                super.mouseClicked(mouseEvent);
+            }
+
+        };
+
+        //stepGraphComponent.getGraphControl().addMouseListener(mouseAdapter);
+        stepGraphComponent.getGraphControl().addMouseListener(stepMouseAdapter);
+
+        stepGraphComponent.getGraph().setCellsMovable(false);
+        stepGraphComponent.getGraph().setCellsEditable(false);
+        stepGraphComponent.getGraph().setCellsResizable(false);
 
 
         this.add(stepGraphComponent);
@@ -378,58 +407,6 @@ public class Vizualizator extends JPanel{
     public int[][] getBaseMatrix() {
         return matrix;
     }
-    /*public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
-
-        graph = new mxGraph();
-        parent = graph.getDefaultParent();
-        graph.getModel().beginUpdate();
-        double phi0 = 0;
-        double phi = 2 * Math.PI / n;
-        int r = 250; // радиус окружности
-
-
-        //отображаем все вершины
-        for (int i = 0; i < points.length; i++) {
-            //points[i] - вершина
-            if (vertName[i] == -1)//вершина удалена
-                continue;
-            points[i] = graph.insertVertex(parent, null, i + 1, 300 + r * Math.cos(phi0), 300 + r * Math.sin(phi0), 40, 40, "shape=ellipse");
-            phi0 += phi;
-        }
-
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (matrix[i][j] > 0) {
-                    HashMap<Object, Object> valH = new HashMap<Object, Object>();
-                    //вес ребра между вершинами - длина кратчайшего пути между ними
-                    //var edgeStyle = graph.getStylesheet().getDefaultEdgeStyle();
-                   // edgeStyle.put(mxConstants.STYLE_EDGE, mxEdgeStyle.EntityRelation);
-
-                    valH.put(points[j], graph.insertEdge(parent, null, matr[i][j], points[i], points[j]));//, mxConstants.STYLE_EDGE));
-                    //edges.put(points[i], valH);
-                }
-            }
-        }
-
-        graph.getModel().endUpdate();*/
-
-       // mxParallelEdgeLayout layoutParallel = new mxParallelEdgeLayout(graph);
-       // mxCircleLayout layoutCircle = new mxCircleLayout(graph);
-        //layoutParallel.execute(graph.getDefaultParent());
-      //  layoutCircle.execute(graph.getDefaultParent());
-
-        //graphComponent - наша текущая модель
-     /*   this.remove(graphComponent);
-
-        stepGraphComponent = new mxGraphComponent(graph);
-        this.add(stepGraphComponent);
-
-        //graphComponent = new mxGraphComponent(graph);
-        //this.add(graphComponent);
-
-        this.revalidate();
-    }*/
 
 
 }
