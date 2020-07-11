@@ -257,6 +257,11 @@ public class GUI {
 
     class ResultListener implements ActionListener { // проверить и имплементировать графику
         public void actionPerformed(ActionEvent e) {
+            addVertexButton.setEnabled(false);
+            addEdgeButton.setEnabled(false);
+            changeButton.setEnabled(false);
+            delVertexButton.setEnabled(false);
+            delEdgeButton.setEnabled(false);
             StepButton.setEnabled(false);
             ResultButton.setEnabled(false);
             graph.FloydWarshall();
