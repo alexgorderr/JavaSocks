@@ -333,17 +333,20 @@ public class GUI {
 
             //формат ввода: v1->v2=3
 
-            String v = addEdgeText.getText().toString();
+            String v = changeEdgeText.getText().toString();
             int splitIndex1 = v.indexOf("->",0);
             int splitIndex2 = v.indexOf("=", 0);
 
             String first = v.substring(0, splitIndex1);
             String second = v.substring(splitIndex1 + 2, splitIndex2);
             String third = v.substring(splitIndex2 + 1);
-
-            int v1 = Integer.parseInt(first);
-            int v2 = Integer.parseInt(second);
-            int edge = Integer.parseInt(third);
+            int v1=0,v2=0,edge=0;
+            try{
+             v1 = Integer.parseInt(first);
+             v2 = Integer.parseInt(second);
+             edge = Integer.parseInt(third);}
+            catch(NumberFormatException ex){
+                System.err.println("You entered the wrong data type:use the int type.");}
 
             delEdgeText.setText("");
 
