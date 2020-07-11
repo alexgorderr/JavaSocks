@@ -6,7 +6,6 @@ public class Graph {
     int n;
     int curI, curJ, curK;
     private int[][] matrix;
-    static int I = 99999999; // Integer.MAX_VALUE
 
     public Graph() {
         n = curI = curJ = curK = 0;
@@ -53,13 +52,12 @@ public class Graph {
             for (j = 0; j < n; j++) {
                 if (i == j)
                     matrix[i][j] = 0;
-                else if (matrix[i][j] == 0)
-                    matrix[i][j] = I;
             }
         }
         for (k = 0; k < n; k++) {
             for (i = 0; i < n; i++) {
                 for (j = 0; j < n; j++) {
+                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0) continue;
                     if ((matrix[i][k] + matrix[k][j] < matrix[i][j]) && (i != j) ) {
                         matrix[i][j] = matrix[i][k] + matrix[k][j];
                     }
@@ -79,8 +77,6 @@ public class Graph {
             for (int j = 0; j < n; j++) {
                 if (i == j)
                     matrix[i][j] = 0;
-                else if (matrix[i][j] == 0)
-                    matrix[i][j] = I;
             }
         }
 
@@ -99,7 +95,7 @@ public class Graph {
         for (; curK < n; curK++) {
             for (; curI < n; curI++) {
                 for (curJ = 0; curJ < n; curJ++) {
-                    //System.out.println(curJ);
+                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0) continue;
                     if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) ) {
                         matrix[curI][curJ] = matrix[curI][curK] + matrix[curK][curJ];
                         System.out.println("((((");
@@ -112,43 +108,64 @@ public class Graph {
         }
     }
 
-    public String print(){
-        String var1 = "";
-        for ( int i = 0; i < n; ++i) {
-            for ( int j = 0; j < n; ++j) {
-                if(j==0){
-                    if(matrix[i][j]==I)
-                        var1 += "I";
-                    else
-                        var1 +=matrix[i][j];}
-                else{
-                    if(matrix[i][j]==I)
-                        var1 += " " + "I";
-                    else
-                        var1 += " " + matrix[i][j];}
-            }
-            if(i!=n-1)
-                var1+="\n";
+    public String print() {
+        String res = "";
+        String str = " #  ";
+        StringBuffer buff = new StringBuffer();
+        boolean[] check = new boolean[n];
+        for(int i = 0; i < n; i++) {
+            if(matrix[i][0] < 0) check[i] = true;
         }
-        System.out.println(var1);
-        return var1;
-    }
 
+        for(int i = 0; i < n; i++) {
+            int num = i+1;
+            if(check[i] == true) continue;
+            buff.append(num);
+            for(int k = 0; k < 4-buff.length();k++) buff.append(" ");
+            str+= buff;
+            buff.delete(0, buff.length());
+        }
+        res += str + "\n";
+
+        for(int i = 0; i < n; i++) {
+            str = "";
+            int num = i+1;
+            if(check[i] == true) continue;
+            buff.append(num);
+            for(int k = 0; k < 4-buff.length();k++) buff.append(" ");
+            str+= buff;
+            buff.delete(0, buff.length());
+            for(int j = 0; j < n; j++) {
+                if(check[j] == true) continue;
+                buff.append(matrix[i][j]);
+                for(int k = 0; k < 4-buff.length();k++) buff.append(" ");
+                str+= buff;
+                buff.delete(0, buff.length());
+            }
+            res+= str + "\n";
+        }
+
+
+        return res;
+    }
 
     public int[][] getMatrix() {
         return matrix;
     }
 
-    public void changeMatrix(int value) {
-        matrix[curI][curJ] = value;
-    }
     public int getN() { return n;}
     public int getJ() { return curJ;}
     public int getI() { return curI;}
     public int getK() { return curK;}
 
-    public void setMatrix(int[][] newMatrix) {
 
+    public void resetGraph(int[][] matr) {
+        this.curI = this.curJ = this.curK = 0;
+        for(int i = 0; i < matr.length; i++) {
+            for(int j = 0; j < matr.length; j++) {
+                this.matrix[i][j] = matr[i][j];
+            }
+        }
     }
 
     public void updateMatrix(){
@@ -173,13 +190,13 @@ public class Graph {
 
     public void changeEdge(int v1, int v2, int newEdge){
         if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-2] != 0){//ребро существует
-            matrix[v1-1][v2-2] = newEdge;
+            matrix[v1-1][v2-1] = newEdge;
         }
     }
 
     public void addEdge(int v1, int v2, int newEdge){
-        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-2] == 0){//ребро не существует
-            matrix[v1-1][v2-2] = newEdge;
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-2] == 0) { // ребро не существует
+            matrix[v1-1][v2-1] = newEdge;
         }
     }
 

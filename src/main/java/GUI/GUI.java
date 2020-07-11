@@ -3,29 +3,14 @@ package GUI;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.Random;
-import java.util.Random.*;
 import java.util.Scanner;
-import com.mxgraph.io.mxCodec;
 
 import Graph.*;
-import com.mxgraph.util.mxUtils;
-import com.mxgraph.view.mxGraph;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import com.mxgraph.util.mxXmlUtils;
 
 public class GUI {
     private Graph graph;
-
-    private JButton saveButton = new JButton("Save");
-    private JTextField loadText = new JTextField();
-    private JButton loadButton = new JButton("Load");
 
     private JLabel labelIn = new JLabel("Input matrix:");
     private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 4\n2 1 1 3\n2 5 3 0");
@@ -38,7 +23,7 @@ public class GUI {
     private JButton InputButton = new JButton("Input");
     private JButton RandomButton = new JButton("Random");
     private JButton StepButton = new JButton("Step"); // by step by step by step ...
-    private JButton Result = new JButton("Result");
+    private JButton ResultButton = new JButton("Result");
     private JButton ResetButton = new JButton("Reset");
 
     private JButton addVertexButton = new JButton("Add vertex");
@@ -66,11 +51,6 @@ public class GUI {
 
         Container northContainer = new Container(); // менюшка
         northContainer.setLayout(new FlowLayout());
-        saveButton.addActionListener(new saveListener());
-        northContainer.add(saveButton);
-        northContainer.add(loadText);
-        loadButton.addActionListener(new loadListener());
-        northContainer.add(loadButton);
 
         Container westContainer = new Container(); // ввод
         westContainer.setLayout(new GridLayout(3, 2));
@@ -118,8 +98,8 @@ public class GUI {
         southContainer.add(InputButton);
         StepButton.addActionListener(new StepListener());
         southContainer.add(StepButton);
-        Result.addActionListener(new QuickListener());
-        southContainer.add(Result);
+        ResultButton.addActionListener(new ResultListener());
+        southContainer.add(ResultButton);
         ResetButton.addActionListener(new resetListener());
         southContainer.add(ResetButton);
 
@@ -134,13 +114,12 @@ public class GUI {
         RandomButton.setEnabled(true);
         InputButton.setEnabled(true);
         StepButton.setEnabled(false);
-        Result.setEnabled(false);
+        ResultButton.setEnabled(false);
         addVertexButton.setEnabled(false);
         addEdgeButton.setEnabled(false);
         changeButton.setEnabled(false);
         delVertexButton.setEnabled(false);
         delEdgeButton.setEnabled(false);
-        saveButton.setEnabled(false);
 
         frame.setVisible(true);
     }
@@ -153,7 +132,7 @@ public class GUI {
                 RandomButton.setEnabled(false);
                 InputButton.setEnabled(false);
                 StepButton.setEnabled(true);
-                Result.setEnabled(true);
+                ResultButton.setEnabled(true);
                 addVertexButton.setEnabled(true);
                 addEdgeButton.setEnabled(true);
                 changeButton.setEnabled(true);
@@ -187,7 +166,6 @@ public class GUI {
 
     class RandomActionListener implements ActionListener { // тоже можно проверить
         public void actionPerformed (ActionEvent e) {
-            saveButton.setEnabled(true);
             delVertexText.setText("Example: 3");
             addEdgeText.setText("Example: 1->2=3");
             changeEdgeText.setText("Example: 1->2=4");
@@ -267,20 +245,20 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             if(graph.getK() == graph.getN()) {
                 StepButton.setEnabled(false);
-                Result.setEnabled(false);
+                ResultButton.setEnabled(false);
             }
-            //graph.print();
+
             graph.FWStep();
-           // graph.print();
 
             visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
             textIn.setText(graph.print());
         }
     }
 
-    class QuickListener implements ActionListener { // проверить и имплементировать графику
+    class ResultListener implements ActionListener { // проверить и имплементировать графику
         public void actionPerformed(ActionEvent e) {
             StepButton.setEnabled(false);
+            ResultButton.setEnabled(false);
             graph.FloydWarshall();
             visual.updateResultMatrix(graph.getMatrix(), graph.getMatrix().length);
             textOut.setText(graph.print());
@@ -403,84 +381,27 @@ public class GUI {
     class resetListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             centerContainer.remove(visual);
-            graph = new Graph();
+            graph.resetGraph(visual.getBaseMatrix());
             visual = new Vizualizator();
+            visual.initMatrix(graph.getMatrix(), graph.getMatrix().length);
+            visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
             centerContainer.add(visual);
 
-            textIn.setText("2 3 1 5\n0 1 7 4\n2 1 1 3\n2 5 3 0");
+            textIn.setText(graph.print());
             textOut.setText("");
             addEdgeText.setText("");
             changeEdgeText.setText("");
             delVertexText.setText("");
             delEdgeText.setText("");
 
-            RandomButton.setEnabled(true);
-            InputButton.setEnabled(true);
-            StepButton.setEnabled(false);
-            Result.setEnabled(false);
-            addVertexButton.setEnabled(false);
-            addEdgeButton.setEnabled(false);
-            changeButton.setEnabled(false);
-            delVertexButton.setEnabled(false);
-            delEdgeButton.setEnabled(false);
 
-        }
-    }
-
-    class saveListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            mxCodec codec = new mxCodec();
-            Node node = codec.encode(visual.returnGraph().getModel());
-            String str = mxXmlUtils.getXml(node);
-            JFileChooser filer = new JFileChooser();
-            filer.setDialogTitle("Проводник");
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML", "xml");
-            filer.setFileFilter(filter);
-            filer.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int num = filer.showSaveDialog(null);
-            if(num == JFileChooser.APPROVE_OPTION) {
-                try {
-                    FileWriter writer;
-                    if(filer.getSelectedFile().getPath().endsWith(".xml")) {
-                        writer = new FileWriter(filer.getSelectedFile().getPath());
-                    }
-                    else {
-                        File tmp = new File(filer.getSelectedFile().getPath() + ".xml");
-                        writer = new FileWriter(tmp);
-                    }
-                    writer.write(str);
-                    writer.close();
-                    System.out.println(str);
-                }
-                catch(Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
-        ;
-    }
-
-    class loadListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            JFileChooser filer = new JFileChooser();
-            filer.setDialogTitle("Проводник");
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("XML", "xml");
-            filer.setFileFilter(filter);
-            filer.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int num = filer.showSaveDialog(null);
-            if(num == JFileChooser.APPROVE_OPTION) {
-                try {
-                    mxGraph tmp = new mxGraph();
-                    Document doc = mxXmlUtils.parseXml(mxUtils.readFile(filer.getSelectedFile().toString()));
-                    System.out.println(mxUtils.readFile(filer.getSelectedFile().toString()));
-                    mxCodec codec = new mxCodec(doc);
-                    codec.decode(doc.getDocumentElement(), tmp.getModel());
-                    visual.setGraph(tmp);
-                }
-                catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }
+            StepButton.setEnabled(true);
+            ResultButton.setEnabled(true);
+            addVertexButton.setEnabled(true);
+            addEdgeButton.setEnabled(true);
+            changeButton.setEnabled(true);
+            delVertexButton.setEnabled(true);
+            delEdgeButton.setEnabled(true);
         }
     }
 }

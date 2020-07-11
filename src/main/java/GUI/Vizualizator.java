@@ -375,6 +375,9 @@ public class Vizualizator extends JPanel{
 
     }
 
+    public int[][] getBaseMatrix() {
+        return matrix;
+    }
     /*public void displayResult(int[][] matr) {//рисует граф по матрице достижимости
 
         graph = new mxGraph();
