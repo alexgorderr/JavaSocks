@@ -181,7 +181,7 @@ public class Graph {
     }
 
     public void deleteEdge(int v1, int v2){
-        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n){
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-1]!=0){
             System.out.println("start delete");
 
             matrix[v1-1][v2-1] = 0;

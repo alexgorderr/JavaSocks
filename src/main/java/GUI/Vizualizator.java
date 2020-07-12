@@ -291,7 +291,7 @@ public class Vizualizator extends JPanel{
 
     public void changeEdge(int v1, int v2, int newEdge){
         try{
-            if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
+            if(v1 > 0 && v2 > 0 && v1 < n + 1 && v2 < n + 1 && vertName[v1-1] == 1 && vertName[v2-1] == 1 && matrix[v1-1][v2-1]!=0){//условия существования вершин
                 graph.getModel().beginUpdate();
                 removeEdge(v1, v2);
                 addEdge(v1, v2, newEdge);
@@ -305,7 +305,7 @@ public class Vizualizator extends JPanel{
 
     public void removeEdge(int v1, int v2) throws IOException {
 
-        if(v1 > 0 && v2 > 0 && v1 <= n && v2 <= n && vertName[v1-1] == 1 && vertName[v2-1] == 1){//условия существования вершин
+        if(v1 > 0 && v2 > 0 && v1 <= n && v2 <= n && vertName[v1-1] == 1 && vertName[v2-1] == 1 && matrix[v1-1][v2-1]!=0){//условия существования вершин
 
             matrix[v1-1][v2-1] = 0;
 
