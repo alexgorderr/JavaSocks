@@ -138,12 +138,17 @@ public class GUI {
                 changeButton.setEnabled(true);
                 delVertexButton.setEnabled(true);
                 delEdgeButton.setEnabled(true);
+
+                centerContainer.remove(visual);
                 try {
                     graph = new Graph(textIn.getText());
                 } catch (NumberFormatException exception) {
                     System.err.println("Failed to create a graph");
                 }
                 int[][] matr = graph.getMatrix();
+                visual.initMatrix(matr, matr.length);
+                visual.functionVisual(centerContainer.getSize().height, centerContainer.getSize().width);
+                centerContainer.add(visual);
 
                 System.out.println(container.getSize().height);
                 System.out.println(container.getSize().width);
