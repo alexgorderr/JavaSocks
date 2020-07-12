@@ -147,7 +147,6 @@ public class GUI {
                 }
                 int[][] matr = graph.getMatrix();
                 visual.initMatrix(matr, matr.length);
-                visual.functionVisual(centerContainer.getSize().height, centerContainer.getSize().width);
                 centerContainer.add(visual);
 
                 System.out.println(container.getSize().height);
@@ -251,7 +250,13 @@ public class GUI {
             if(graph.getK() == graph.getN()) {
                 StepButton.setEnabled(false);
                 ResultButton.setEnabled(false);
+                textOut.setText(graph.print());
             }
+            addVertexButton.setEnabled(false);
+            addEdgeButton.setEnabled(false);
+            changeButton.setEnabled(false);
+            delVertexButton.setEnabled(false);
+            delEdgeButton.setEnabled(false);
 
             graph.FWStep();
 

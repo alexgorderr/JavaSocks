@@ -48,16 +48,15 @@ public class Graph {
 
     public void FloydWarshall() {
         int i, j, k;
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < n; j++) {
-                if (i == j)
-                    matrix[i][j] = 0;
-            }
-        }
+        for(i = 0; i < n; i++)
+            if(matrix[i][i] != -1)
+                matrix[i][i] = 0;
+
         for (k = 0; k < n; k++) {
             for (i = 0; i < n; i++) {
                 for (j = 0; j < n; j++) {
-                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0) continue;
+                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0 ||
+                    curI == curJ || curI == curK || curJ == curK) continue;
                     if ((matrix[i][k] + matrix[k][j] < matrix[i][j]) && (i != j) ) {
                         matrix[i][j] = matrix[i][k] + matrix[k][j];
                     }
@@ -68,16 +67,13 @@ public class Graph {
 
     public void FWStep() {
 
+        if(curI == 0 && curJ == 0 && curK == 0)
+            for(int i = 0; i < n; i++)
+                if(matrix[i][i] != -1)
+                    matrix[i][i] = 0;
         if(curK == n){
             System.out.println("finish");
             return;
-        }
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (i == j)
-                    matrix[i][j] = 0;
-            }
         }
 
         if(curI < n && curJ >= n) {
@@ -95,7 +91,8 @@ public class Graph {
         for (; curK < n; curK++) {
             for (; curI < n; curI++) {
                 for (curJ = 0; curJ < n; curJ++) {
-                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0) continue;
+                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0 ||
+                    curI == curJ || curI == curK || curJ == curK) continue;
                     if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) ) {
                         matrix[curI][curJ] = matrix[curI][curK] + matrix[curK][curJ];
                         System.out.println("((((");
@@ -103,7 +100,6 @@ public class Graph {
 
                 }
                 return;
-
             }
         }
     }
@@ -115,6 +111,13 @@ public class Graph {
         boolean[] check = new boolean[n];
         for(int i = 0; i < n; i++) {
             if(matrix[i][0] < 0) check[i] = true;
+        }
+        for(int i = 0; i < n; i++) {
+            if(check[i] != true) continue;
+            for(int j = 0; j < n; j++) {
+                if(i==j) continue;
+                if(matrix[i][j] >= 0) check[i] = false;
+            }
         }
 
         for(int i = 0; i < n; i++) {
@@ -181,7 +184,7 @@ public class Graph {
     }
 
     public void deleteEdge(int v1, int v2){
-        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n){
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1][v2] > 0){
             System.out.println("start delete");
 
             matrix[v1-1][v2-1] = 0;
@@ -189,7 +192,7 @@ public class Graph {
     }
 
     public void changeEdge(int v1, int v2, int newEdge){
-        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-1] != 0){//ребро существует
+        if(v1 > 0 && v1 <= n && v2 > 0 && v2 <= n && matrix[v1-1][v2-1] > 0){ //ребро существует
             matrix[v1-1][v2-1] = newEdge;
         }
     }
