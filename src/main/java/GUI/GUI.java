@@ -181,7 +181,7 @@ public class GUI {
             if(vertexes <= 0 || vertexes > 20) {
                 JOptionPane.showMessageDialog(null, "Wrong vertexes input", "Message", JOptionPane.PLAIN_MESSAGE);
             }
-            else if(edges <= 0 || edges >= vertexes*(vertexes-1)) {
+            else if(edges <= 0 || edges > vertexes*(vertexes-1)) {
                 JOptionPane.showMessageDialog(null, "Wrong edges input", "Message", JOptionPane.PLAIN_MESSAGE);
             }
             else {
