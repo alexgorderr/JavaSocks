@@ -13,7 +13,7 @@ public class GUI {
     private Graph graph;
 
     private JLabel labelIn = new JLabel("Input matrix:");
-    private JTextArea textIn = new JTextArea("2 3 1 5\n0 1 7 4\n2 1 1 3\n2 5 3 0");
+    private JTextArea textIn = new JTextArea("0 0 3 0\n1 0 5 0\n0 0 0 1\n4 8 0 0");
     private JLabel labelOut = new JLabel("Output matrix:");
     private JTextArea textOut = new JTextArea();
 
@@ -147,6 +147,7 @@ public class GUI {
                 }
                 int[][] matr = graph.getMatrix();
                 visual.initMatrix(matr, matr.length);
+                visual.functionVisual(centerContainer.getHeight(), centerContainer.getWidth());
                 centerContainer.add(visual);
 
                 System.out.println(container.getSize().height);

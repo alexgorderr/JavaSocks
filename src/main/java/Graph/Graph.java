@@ -7,11 +7,6 @@ public class Graph {
     int curI, curJ, curK;
     private int[][] matrix;
 
-    public Graph() {
-        n = curI = curJ = curK = 0;
-        matrix = new int[0][0];
-    }
-
     public Graph(String var1) throws NumberFormatException {
         curK = 0;
         curI = 0;
@@ -55,9 +50,8 @@ public class Graph {
         for (k = 0; k < n; k++) {
             for (i = 0; i < n; i++) {
                 for (j = 0; j < n; j++) {
-                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0 ||
-                    curI == curJ || curI == curK || curJ == curK) continue;
-                    if ((matrix[i][k] + matrix[k][j] < matrix[i][j]) && (i != j) ) {
+                    if(matrix[i][k] <=0 || matrix[k][j] <= 0 || matrix[i][j] == -1) continue;
+                    if ((matrix[i][k] + matrix[k][j] < matrix[i][j] || matrix[i][j] == 0) && (i != j) ) {
                         matrix[i][j] = matrix[i][k] + matrix[k][j];
                     }
                 }
@@ -91,9 +85,8 @@ public class Graph {
         for (; curK < n; curK++) {
             for (; curI < n; curI++) {
                 for (curJ = 0; curJ < n; curJ++) {
-                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] <= 0 ||
-                    curI == curJ || curI == curK || curJ == curK) continue;
-                    if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ]) ) {
+                    if(matrix[curI][curK] <=0 || matrix[curK][curJ] <= 0 || matrix[curI][curJ] == -1) continue;
+                    if ((matrix[curI][curK] + matrix[curK][curJ] < matrix[curI][curJ] || matrix[curI][curJ] == 0) && (curI != curJ) ) {
                         matrix[curI][curJ] = matrix[curI][curK] + matrix[curK][curJ];
                         System.out.println("((((");
                     }
