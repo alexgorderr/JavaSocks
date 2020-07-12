@@ -1,6 +1,6 @@
-package GUI;
 
 //import org.junit.Assert;
+import GUI.Vizualizator;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -19,7 +19,8 @@ class VizualizatorTest {
         viz.functionVisual(20,30);
         viz.addVert();
         viz.addEdge(3,4,1);
-        assertTrue(viz.matrix[2][3]==1);
+        int mat[][]=viz.getBaseMatrix();
+        assertTrue(mat[2][3]==1);
     }
     @Test
     void addNonEdge_() throws IOException {
@@ -45,7 +46,8 @@ class VizualizatorTest {
         viz.initMatrix(matrix,3);
         viz.functionVisual(20,30);
         viz.removeVert(1);
-        assertTrue(viz.matrix[0][1]==0);
+        int mat[][]=viz.getBaseMatrix();
+        assertTrue(mat[0][1]==0);
     }
 
     @Test
@@ -56,7 +58,8 @@ class VizualizatorTest {
         viz.functionVisual(20,30);
         viz.addVert();
         viz.addEdge(3,4,5);
-        assertTrue(viz.matrix[2][3]==5);
+        int mat[][]=viz.getBaseMatrix();
+        assertTrue(mat[2][3]==5);
     }
 
     @Test
@@ -101,7 +104,8 @@ class VizualizatorTest {
         viz.addVert();
         viz.addEdge(4,5,5);
         viz.changeEdge(4,5,10);
-        assertTrue(viz.matrix[3][4]==10);
+        int mat[][]=viz.getBaseMatrix();
+        assertTrue(mat[3][4]==10);
     }
 
     @Test
@@ -130,8 +134,8 @@ class VizualizatorTest {
             viz.addVert();
             viz.addEdge(4,5,5);
             viz.removeEdge(3,4);
-            System.out.println(viz.matrix[3][4]);
-            assertFalse(viz.matrix[3][4]==0);
+            int mat[][]=viz.getBaseMatrix();
+            assertFalse(mat[3][4]==0);
         }
 
         @Test
